@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bússola · Despacho de Cana — COA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e3e1dc;--card:#ffffff;--ink:#1d1e20;--ink2:#55575c;--mute:#8a8c90;--line:#e7e6e2;--grid:#ecebe7;
+  --side:#2a2c30;--side2:#363940;--sideInk:#e9e8e4;--acc:#f2b705;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--pB:#6250d6;--pA:#eda100;
+  --ok:#1f8f4e;--warn:#c27c00;--crit:#cf3d3d;--okBg:#e5f4ea;--warnBg:#fdf1d8;--critBg:#fbe4e4;
+  --g1:#2a2c30;--g2:#6b6d72;--g3:#a9aaad;--g4:#d4d4d6;
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+[data-theme="dark"]{
+  --bg:#16171a;--card:#212226;--ink:#f0efec;--ink2:#c3c2b7;--mute:#8f8e88;--line:#2f3135;--grid:#2a2b2f;
+  --side:#0f1012;--side2:#1d1f23;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--pB:#9085e9;--pA:#c98500;
+  --okBg:#173322;--warnBg:#3a2c0c;--critBg:#3d1a1a;--ok:#3cbf73;--warn:#e6a525;--crit:#f06b6b;
+  --g1:#e9e8e4;--g2:#a9aaad;--g3:#6b6d72;--g4:#45474c;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* sidebar */
+aside{width:228px;flex:0 0 228px;background:var(--side);color:var(--sideInk);display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
+.brand{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.brand b{display:flex;align-items:center;gap:10px;font-size:19px;letter-spacing:.14em;font-weight:800}
+.brand small{display:block;color:#a8a9ab;font-size:11.5px;margin-top:6px;letter-spacing:.02em}
+.logo{width:30px;height:30px;border-radius:8px;background:var(--acc);display:grid;place-items:center}
+nav{padding:10px 8px;display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto}
+nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#cfd0d2;font-weight:500}
+nav button:hover{background:var(--side2)}
+nav button.on{background:var(--side2);color:#fff;box-shadow:inset 3px 0 0 var(--acc)}
+nav svg{width:17px;height:17px;flex:0 0 17px;opacity:.85}
+.simbox{padding:14px 14px 18px;border-top:1px solid rgba(255,255,255,.07)}
+.clock{font-family:var(--mono);font-size:20px;font-weight:700;color:#fff}
+.clock small{display:block;font-family:Inter;font-size:11px;color:#a8a9ab;font-weight:500;margin-bottom:2px;letter-spacing:.06em;text-transform:uppercase}
+.speeds{display:flex;gap:4px;margin-top:10px}
+.speeds button{flex:1;border:1px solid #4a4d53;background:transparent;border-radius:6px;padding:6px 0;cursor:pointer;color:#cfd0d2;font-family:var(--mono);font-size:12px}
+.speeds button.on{background:var(--acc);border-color:var(--acc);color:#1d1e20;font-weight:700}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#a8a9ab;margin-top:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:#3cbf73;box-shadow:0 0 0 0 rgba(60,191,115,.6);animation:pulse 1.6s infinite}
+.paused .dot{background:#a8a9ab;animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(60,191,115,0)}100%{box-shadow:0 0 0 0 rgba(60,191,115,0)}}
+
+/* main */
+main{flex:1;min-width:0;display:flex;flex-direction:column}
+.zebra{height:8px;background:repeating-linear-gradient(-45deg,var(--acc) 0 14px,#1f2023 14px 28px)}
+.top{display:flex;align-items:center;gap:12px;padding:16px 26px 6px;flex-wrap:wrap}
+.top h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.top .sub{color:var(--ink2);font-size:13px}
+.top .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:var(--mute)}
+.page{display:none;padding:12px 26px 40px}
+.page.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.grid{display:grid;gap:14px}
+.g6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g21{grid-template-columns:2fr 1fr}
+.g12{grid-template-columns:1fr 2fr}
+.card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);border:1px solid var(--line);padding:16px;min-width:0}
+.card h3{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);font-weight:700;display:flex;align-items:center;gap:8px}
+.card h3 .r{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:500;color:var(--mute);font-size:12px}
+.mt{margin-top:14px}
+
+/* KPI */
+.kpi .l{font-size:12px;color:var(--ink2);font-weight:600}
+.kpi .v{font-size:25px;font-weight:800;margin:6px 0 2px;font-family:var(--mono);letter-spacing:-.02em}
+.kpi .s{font-size:12px;color:var(--mute)}
+.kpi svg{display:block;margin-top:8px;width:100%;height:30px}
+
+/* status pills */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.pill.ok{background:var(--okBg);color:var(--ok)}
+.pill.warn{background:var(--warnBg);color:var(--warn)}
+.pill.crit{background:var(--critBg);color:var(--crit)}
+.pill.neu{background:var(--grid);color:var(--ink2)}
+
+/* unit card */
+.ucard{position:relative;overflow:hidden}
+.ucard .bar{position:absolute;left:0;top:0;bottom:0;width:4px}
+.uhead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.uhead b{font-size:16px}
+.uhead .pill{margin-left:auto}
+.voltas{display:flex;align-items:baseline;gap:6px}
+.voltas .big{font-size:34px;font-weight:800;font-family:var(--mono);letter-spacing:-.03em}
+.voltas span{color:var(--ink2);font-size:13px}
+.gauge{position:relative;height:16px;border-radius:5px;background:var(--grid);margin:10px 0 4px;overflow:hidden}
+.gauge .zone{position:absolute;top:0;bottom:0}
+.gauge .fill{position:absolute;left:0;top:3px;bottom:3px;border-radius:0 4px 4px 0;transition:width .4s}
+.gauge .tick{position:absolute;top:0;bottom:0;width:2px;background:var(--ink)}
+.gscale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mute);font-family:var(--mono)}
+.umet{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:12px}
+.umet div{font-size:11.5px;color:var(--ink2)}
+.umet b{display:block;font-family:var(--mono);font-size:15px;color:var(--ink);margin-top:2px}
+
+/* feed */
+.feed{display:flex;flex-direction:column;gap:2px;max-height:330px;overflow:auto}
+.ev{display:grid;grid-template-columns:44px 20px 1fr;gap:6px;padding:7px 4px;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.35;animation:fade .3s}
+.ev time{font-family:var(--mono);color:var(--mute);font-size:11.5px;padding-top:1px}
+.ev i{font-style:normal;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff}
+.ev i.ok{background:var(--ok)}.ev i.warn{background:var(--warn)}.ev i.crit{background:var(--crit)}.ev i.inf{background:var(--g2)}
+
+/* tables */
+.tw{overflow:auto;max-height:520px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:700;padding:8px 8px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);white-space:nowrap}
+td{padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono)}
+tr.best td{background:var(--okBg)}
+tr.bad td{background:var(--critBg)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* forms */
+.frm{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.frm label{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--ink2);font-weight:600}
+.frm input,.frm select,.cfg input,.cfg select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;min-width:0}
+.btn{border:0;background:var(--ink);color:var(--card);padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer}
+.btn.y{background:var(--acc);color:#1d1e20}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.cfg input{width:90px}
+
+/* recommendation */
+.rec{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.rec .arrow{font-size:13px;color:var(--ink2);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.rec .dest{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.why{margin:10px 0 0;padding-left:18px;color:var(--ink2);line-height:1.6}
+.callout{border-left:4px solid var(--acc);background:var(--warnBg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.5}
+.callout.crit{border-color:var(--crit);background:var(--critBg)}
+.callout.ok{border-color:var(--ok);background:var(--okBg)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-bottom:6px}
+.explain{font-size:13px;line-height:1.6;color:var(--ink2)}
+.explain code{font-family:var(--mono);background:var(--grid);padding:1px 6px;border-radius:4px;color:var(--ink)}
+
+/* charts */
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--card);padding:8px 10px;border-radius:8px;font-size:12px;line-height:1.45;z-index:50;opacity:0;transition:opacity .1s;max-width:260px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.tip b{font-family:var(--mono)}
+.stack{display:flex;height:22px;gap:2px;border-radius:4px;overflow:hidden}
+.stack div{height:100%}
+
+/* map */
+#map svg{width:100%;height:auto;display:block}
+#c3d{position:relative;height:620px;border-radius:10px;overflow:hidden;background:var(--grid)}
+#c3d canvas{display:block}
+#c3d .lbls{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#c3d .lbl{position:absolute;left:0;top:0;white-space:nowrap;font-size:12px;font-weight:700;background:rgba(255,255,255,.94);color:#1d1e20;border-radius:999px;padding:4px 6px 4px 8px;box-shadow:0 3px 10px rgba(0,0,0,.18);display:flex;align-items:center;gap:6px;will-change:transform}
+#c3d .lbl i{width:10px;height:10px;border-radius:3px}
+#c3d .lbl span{font-family:var(--mono);color:#55575c}
+#c3d .lbl em{font-style:normal;font-size:10.5px;padding:2px 7px;border-radius:999px;background:#e5f4ea;color:#1f8f4e}
+#c3d .lbl em.warn{background:#fdf1d8;color:#c27c00}#c3d .lbl em.crit{background:#fbe4e4;color:#cf3d3d}
+#c3d .lbl.f{font-size:10.5px;padding:2px 8px;background:rgba(29,30,32,.72);color:#fff;font-weight:600;box-shadow:none}
+.v3btns{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap;z-index:5}
+.v3btns button{border:0;background:rgba(255,255,255,.94);color:#1d1e20;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.v3btns button.on{background:var(--acc)}
+.v3leg{position:absolute;bottom:10px;left:10px;display:flex;gap:12px;flex-wrap:wrap;background:rgba(255,255,255,.9);color:#1d1e20;padding:6px 10px;border-radius:8px;font-size:11px;z-index:5}
+.v3leg span{display:flex;align-items:center;gap:5px}
+.v3leg .tk{width:16px;height:7px;border-radius:2px;background:#7da23a;box-shadow:inset -5px 0 0 #2a78d6}.v3leg .tk.e{background:#8c8f94}
+.v3leg .gz{width:6px;height:14px;background:linear-gradient(#d64545 0 2px,#fff 2px 6px,#e6a525 6px 8px,#2a78d6 8px)}
+
+#info3d{font-size:13px;line-height:1.6}
+.hint{font-size:12px;color:var(--mute)}
+
+/* TV */
+body.tv aside{display:none}
+body.tv .top .chip:not(#tvBtn){display:none}
+body.tv .page{padding-top:6px}
+body.tv .tvbar{display:block}
+.tvbar{display:none;height:3px;background:var(--acc);width:0;transition:width linear}
+
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100%;background:var(--card);box-shadow:-12px 0 32px rgba(0,0,0,.2);z-index:40;transform:translateX(105%);transition:transform .25s ease;overflow:auto;padding:22px 22px 40px;border-left:4px solid var(--acc)}
+.drawer{visibility:hidden}.drawer.open{transform:none;visibility:visible}
+.drawer .x{position:sticky;top:0;float:right;border:0;background:var(--grid);width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;color:var(--ink);z-index:2}
+.fk{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:700}
+.ft{font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-.02em;margin:2px 0}
+.fs{color:var(--ink2);font-size:13px}
+.fh{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:700;margin:18px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
+.prog{height:12px;border-radius:6px;background:var(--grid);overflow:hidden;position:relative}
+.prog>div{height:100%;border-radius:6px;background:var(--ok);transition:width .4s}
+.prog.sm{height:7px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.kv div{font-size:11.5px;color:var(--ink2)}
+.kv b{display:block;font-size:14px;color:var(--ink);margin-top:2px;font-family:var(--mono)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips span{font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--grid);color:var(--ink)}
+.chips span.ok{background:var(--okBg);color:var(--ok)}.chips span.warn{background:var(--warnBg);color:var(--warn)}
+[data-o]{cursor:pointer}
+tr[data-o]:hover td{background:var(--grid)}
+.lrow{display:grid;grid-template-columns:62px 1fr 92px;gap:10px;align-items:center;padding:8px 4px;border-bottom:1px solid var(--line);font-size:12.5px}
+.lrow b{font-family:var(--mono)}
+.lrow .sub{font-size:11px;color:var(--mute)}
+.fcard .hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.fcard .hd b{font-size:14px}
+.fcard .hd .pill{margin-left:auto}
+.mini{font-size:11.5px;color:var(--ink2);margin-top:6px;line-height:1.5}
+.mini b{color:var(--ink);font-family:var(--mono)}
+.turnoBox .ft{font-size:34px}
+.badge{margin-left:auto;background:var(--crit);color:#fff;border-radius:999px;font-size:10.5px;font-weight:800;padding:2px 7px;min-width:20px;text-align:center}
+.badge:empty{display:none}
+.sg{border-left:5px solid var(--g3);padding:16px 18px}
+.sg.crit{border-left-color:var(--crit)}.sg.warn{border-left-color:var(--warn)}.sg.ok{border-left-color:var(--ok)}.sg.info{border-left-color:var(--g2)}
+.sg .st{display:flex;gap:10px;align-items:flex-start}
+.sg .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;flex:0 0 30px;font-size:15px}
+.sg.crit .ic{background:var(--crit)}.sg.warn .ic{background:var(--warn)}.sg.ok .ic{background:var(--ok)}.sg.info .ic{background:var(--g2)}
+.sg h4{margin:2px 0 4px;font-size:16px;line-height:1.3}
+.sg p{margin:0;color:var(--ink2);font-size:13px;line-height:1.5}
+.costs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.costs div{background:var(--bg);border-radius:10px;padding:9px 12px;font-size:11.5px;color:var(--ink2);font-weight:600}
+.costs b{display:block;font-family:var(--mono);font-size:17px;color:var(--ink);margin-top:2px}
+.costs .g b{color:var(--ok)}.costs .n b{color:var(--crit)}
+.sgi{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:12.5px}
+.sgi .d{color:var(--mute);font-size:11.5px;margin-top:2px}
+.btn.sm{padding:6px 11px;font-size:12px}
+.conta{background:var(--bg);border-radius:10px;padding:12px 16px;margin-top:10px;font-size:13px;line-height:1.65;color:var(--ink)}
+.conta ol{margin:0;padding-left:20px}.conta li{margin:3px 0}.conta li::marker{color:var(--mute);font-family:var(--mono);font-size:11.5px}
+.conta .res{display:block;margin-top:6px;padding:8px 12px;border-radius:8px;font-weight:600}
+.conta .res.ok{background:var(--okBg);color:var(--ok)}.conta .res.no{background:var(--critBg);color:var(--crit)}
+.exb{border:0;background:transparent;color:var(--ink2);font-weight:700;font-size:12px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+.sgi .conta{grid-column:1/-1;margin-top:4px}
+.sgmini{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:9px 2px;border-bottom:1px solid var(--line);font-size:13px}
+.sgmini i{font-style:normal;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800}
+.kv b[style*=color],.mini b[style*=color]{font-family:inherit}
+@media (max-width:1180px){.g6{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){
+  .v3leg{font-size:10px;gap:8px}.v3btns button{padding:6px 9px;font-size:11px}
+  body{flex-direction:column}
+  aside{width:auto;flex:none;height:auto;position:sticky;top:0;z-index:20}
+  .brand{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
+  .brand small{display:none}
+  nav{flex-direction:row;overflow-x:auto;padding:6px;flex:none}
+  nav button{white-space:nowrap;padding:8px 10px;font-size:13px}
+  nav button span{display:inline}
+  .simbox{display:flex;align-items:center;gap:10px;padding:8px 14px;flex-wrap:wrap}
+  .speeds{margin:0;flex:1}
+  .live{margin:0}
+  .clock{font-size:15px}
+  .g6{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3,.g2,.g21,.g12{grid-template-columns:1fr}
+  .page,.top{padding-left:12px;padding-right:12px}
+  .kpi .v{font-size:21px}
+  #c3d{height:420px}
+  .g4{grid-template-columns:1fr}
+  #mDest .lrow{grid-template-columns:1fr!important}.costs{grid-template-columns:1fr}.sgi{grid-template-columns:1fr auto}.sgi .btn{grid-column:1/-1}#mDest .num{text-align:left!important}
+  .drawer{top:auto;width:100%;height:80vh;border-left:0;border-top:4px solid var(--acc);border-radius:16px 16px 0 0;transform:translateY(105%)}
+  .drawer.open{transform:none}
+}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">
+    <b><span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1d1e20" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13 13l-4.5 2.5L11 11z" fill="#1d1e20"/></svg></span>BÚSSOLA</b>
+    <small>Despacho inteligente de cana · COA</small>
+  </div>
+  <nav id="nav">
+    <button data-pg="geral" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Visão geral</span></button>
+    <button data-pg="sugestoes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg><span>Sugestões</span><b class="badge" id="sgBadge"></b></button>
+    <button data-pg="despacho"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span>Despacho</span></button>
+    <button data-pg="frota"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v6.5M4.5 16.5l5.4-3.1M19.5 16.5l-5.4-3.1"/></svg><span>Frota &amp; frentes</span></button>
+    <button data-pg="motoristas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.2c2.8.2 5 2.6 5 5.8"/></svg><span>Motoristas &amp; turnos</span></button>
+    <button data-pg="rotas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h2M14 11h2M8 15h2M14 15h2M8 19h2M14 19h2"/></svg><span>Calculadora de rota</span></button>
+    <button data-pg="predicao"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4" /></svg><span>Predição</span></button>
+    <button data-pg="mapa3d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><span>Mapa 3D</span></button>
+    <button data-pg="comparativo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Comparativo</span></button>
+    <button data-pg="historico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Histórico</span></button>
+    <button data-pg="config"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Configurações</span></button>
+  </nav>
+  <div class="simbox" id="simbox">
+    <div class="clock"><small>Relógio da simulação</small><span id="clk">—</span></div>
+    <div class="speeds" id="speeds">
+      <button data-s="0">❚❚</button><button data-s="1">1×</button><button data-s="60" class="on">60×</button><button data-s="300">300×</button>
+    </div>
+    <div class="live"><span class="dot"></span><span id="liveTxt">Ao vivo · simulação</span></div>
+    <div class="live" id="turnoSide" style="color:#e9e8e4;font-weight:600"></div>
+  </div>
+</aside>
+
+<main>
+  <div class="zebra"></div>
+  <div class="tvbar" id="tvbar"></div>
+  <header class="top">
+    <div>
+      <h1 id="ttl">Visão geral</h1>
+      <div class="sub">COA Iturama · unidades Iturama, Limeira do Oeste e Carneirinho</div>
+    </div>
+    <div class="sp"></div>
+    <span class="chip" id="themeBtn">◐ Tema</span>
+    <span class="chip" id="tvBtn">▶ Modo TV</span>
+  </header>
+
+  <!-- VISÃO GERAL -->
+  <section class="page on" id="pg-geral">
+    <div class="grid g6" id="kpis"></div>
+    <div class="card mt" id="sgHome" style="display:none"><h3>Sugestões agora <span class="r">toque para ver o custo de cada uma</span></h3><div id="sgHomeList"></div></div>
+    <div class="grid g3 mt" id="ucards"></div>
+    <div class="grid g21 mt">
+      <div class="card"><h3>Caminhões carregando nas frentes <span class="r">mais cheios primeiro · toque para ver a ficha</span></h3><div id="loadList"></div></div>
+      <div class="card turnoBox"><h3>Turno atual</h3><div id="turnoCard"></div></div>
+    </div>
+    <div class="grid g21 mt">
+      <div class="card"><h3>Mapa ao vivo <span class="r">cheio ● · vazio ○ · cor = destino · toque em caminhão, frente ou usina</span></h3><div id="map"></div></div>
+      <div class="card"><h3>Ao vivo <span class="r" id="feedN"></span></h3><div class="feed" id="feed"></div></div>
+    </div>
+    <div class="grid g12 mt">
+      <div class="card"><h3>Balanço corte × moagem</h3><div id="balanco"></div></div>
+      <div class="card"><h3>Últimos despachos do Bússola</h3><div class="tw" style="max-height:300px"><table id="lastDesp"></table></div></div>
+    </div>
+  </section>
+
+  <!-- DESPACHO -->
+  <section class="page" id="pg-despacho">
+    <div class="card">
+      <h3>Para onde mando este caminhão?</h3>
+      <div class="frm">
+        <label>Frente de corte<select id="dFrente"></select></label>
+        <label>Carga (t)<input id="dCarga" type="number" value="66" min="20" max="90" step="1" style="width:90px"></label>
+        <button class="btn y" id="dCalc">Calcular destino</button>
+        <span class="hint" id="dInfo"></span>
+      </div>
+    </div>
+    <div class="grid g21 mt">
+      <div class="card" id="dRec"></div>
+      <div class="card"><h3>Como o Bússola decide</h3>
+        <div class="explain">
+          Para cada unidade ele calcula o <b>custo total</b> de mandar o caminhão para lá:<br>
+          <code>diesel</code> ida e volta + <code>hora do caminhão</code> (viagem + fila + volta) + <code>ATR perdido</code> enquanto a cana espera + <code>penalidade</code> se o pátio passar do máximo de voltas − <code>bônus</code> se a carga evitar que a moenda fique sem cana.<br><br>
+          A <b>fila</b> é prevista assim: estoque na chegada (t) − estoque que cabe no pátio ÷ moagem (t/min). Unidade com <b>moenda parada</b> soma o tempo até voltar a moer.
+        </div>
+      </div>
+    </div>
+    <div class="card mt"><h3>Ranking das unidades <span class="r">menor custo = melhor destino</span></h3>
+      <div class="legend"><span><i class="sw" style="background:var(--g1)"></i>Diesel</span><span><i class="sw" style="background:var(--g2)"></i>Hora caminhão</span><span><i class="sw" style="background:var(--g3)"></i>ATR perdido</span><span><i class="sw" style="background:var(--crit)"></i>Penalidade pátio cheio</span></div>
+      <div id="dStack"></div>
+      <div class="tw mt"><table id="dTab"></table></div>
+    </div>
+  </section>
+
+  <!-- FROTA -->
+  <section class="page" id="pg-frota">
+    <div class="grid g6" id="frKpis"></div>
+    <h3 style="margin:18px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2)">Frentes de serviço</h3>
+    <div class="grid g4" id="frFrentes"></div>
+    <div class="card mt">
+      <h3>Caminhões <span class="r" id="frN"></span></h3>
+      <div class="frm" style="margin-bottom:10px">
+        <label>Frente<select id="frF"><option value="">Todas</option></select></label>
+        <label>Situação<select id="frS"><option value="">Todas</option><option value="carregando">Carregando</option><option value="aguardando">Aguardando na frente</option><option value="ida">Carregado → usina</option><option value="fila">Na fila da usina</option><option value="volta">Voltando vazio</option></select></label>
+        <label>Buscar<input id="frQ" placeholder="frota, placa ou motorista"></label>
+      </div>
+      <div class="tw"><table id="frTab"></table></div>
+    </div>
+  </section>
+
+  <!-- SUGESTÕES -->
+  <section class="page" id="pg-sugestoes">
+    <div class="grid g6" id="sgKpis"></div>
+    <div class="card mt"><div class="frm" style="align-items:center">
+      <label style="flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--ink)"><input type="checkbox" id="sgAuto"> Aplicar sozinho as sugestões com ganho acima de</label>
+      <label style="flex-direction:row;align-items:center;gap:6px">R$<input id="sgMin" type="number" value="500" step="50" style="width:90px"></label>
+      <span class="hint">As sugestões são recalculadas a cada segundo com o estado do sistema. "Aplicar" muda a simulação do Bússola: o caminhão é desviado de verdade e dá para ver o efeito.</span>
+    </div></div>
+    <div id="sgList" class="grid mt" style="gap:12px"></div>
+    <div class="card mt"><h3>Rotas que não compensam <span class="r">custo fixo da rota, sem fila · últimas 24h</span></h3><div class="tw"><table id="sgRotas"></table></div></div>
+    <div class="card mt"><h3>Sugestões aplicadas <span class="r" id="sgApN"></span></h3><div class="tw"><table id="sgAp"></table></div></div>
+  </section>
+
+  <!-- MOTORISTAS & TURNOS -->
+  <section class="page" id="pg-motoristas">
+    <div class="card"><div class="frm">
+      <label>Período<select id="mP"><option value="24h" selected>Últimas 24 horas</option><option value="turno">Turno atual</option><option value="dia">Dia de safra (desde 07h)</option><option value="ontem">Dia anterior</option><option value="tudo">Toda a simulação</option></select></label>
+      <label>Turno<select id="mT"><option value="">Todos</option><option value="0">A (07h–15h)</option><option value="1">B (15h–23h)</option><option value="2">C (23h–07h)</option></select></label>
+      <label>Frente<select id="mF"><option value="">Todas</option></select></label>
+      <label>Buscar<input id="mQ" placeholder="motorista ou frota"></label>
+      <span class="hint">Só viagens completas (saiu da frente, descarregou e voltou).</span>
+    </div></div>
+    <div class="grid g6 mt" id="mKpis"></div>
+    <div class="grid g21 mt">
+      <div class="card"><h3>Toneladas despachadas por hora <span class="r">últimas 24h · cor = turno</span></h3>
+        <div class="legend"><span><i class="sw" style="background:var(--g1)"></i>Turno A</span><span><i class="sw" style="background:var(--g2)"></i>Turno B</span><span><i class="sw" style="background:var(--g3)"></i>Turno C</span></div>
+        <div class="chart" id="mHour"></div></div>
+      <div class="card"><h3>Comparação dos turnos</h3><div id="mTurnos"></div></div>
+    </div>
+    <div class="grid g2 mt">
+      <div class="card"><h3>Onde o tempo se perde <span class="r">fila média por unidade e turno</span></h3><div class="tw"><table id="mFila"></table></div></div>
+      <div class="card"><h3>Destaques</h3><div id="mDest"></div></div>
+    </div>
+    <div class="card mt"><h3>Ranking de motoristas <span class="r" id="mN"></span></h3><div class="tw"><table id="mTab"></table></div></div>
+  </section>
+
+  <!-- CALCULADORA DE ROTA -->
+  <section class="page" id="pg-rotas">
+    <div class="card">
+      <h3>Quanto custa levar a cana da fazenda até cada unidade?</h3>
+      <div class="frm">
+        <label>Fazenda / frente<select id="rF"></select></label>
+        <label>Carga (t)<input id="rC" type="number" value="66" min="20" max="80" step="1" style="width:84px"></label>
+        <label>Viagens por dia<input id="rV" type="number" value="40" min="1" max="400" step="1" style="width:90px"></label>
+        <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="rFila" checked> Somar a fila prevista agora</label>
+        <button class="btn ghost" id="rParBtn">⚙ Parâmetros</button>
+      </div>
+      <div id="rPar" class="cfg" style="display:none;margin-top:12px"></div>
+    </div>
+    <div class="grid g3 mt" id="rCards"></div>
+    <div class="grid g2 mt">
+      <div class="card"><h3>Custo por viagem <span class="r">diesel + hora do caminhão</span></h3>
+        <div class="legend"><span><i class="sw" style="background:var(--g1)"></i>Diesel</span><span><i class="sw" style="background:var(--g3)"></i>Hora do caminhão</span></div>
+        <div id="rBars"></div><div id="rDiff" class="mt"></div></div>
+      <div class="card"><h3>Projeção de diesel <span class="r" id="rProjSub"></span></h3><div class="tw"><table id="rProj"></table></div></div>
+    </div>
+    <div class="card mt"><h3>Todas as fazendas × unidades <span class="r">R$ por tonelada · mais escuro = mais caro · toque para abrir</span></h3><div class="tw"><table id="rMat"></table></div></div>
+    <div class="card mt"><h3>Como a conta é feita</h3><div class="explain" id="rExp"></div></div>
+  </section>
+
+  <!-- PREDIÇÃO -->
+  <section class="page" id="pg-predicao">
+    <div class="grid g3" id="predBal"></div>
+    <div class="grid g3 mt" id="predCards"></div>
+    <div class="card mt"><h3>Como a predição é feita</h3>
+      <div class="explain" id="predExplain"></div>
+    </div>
+  </section>
+
+  <!-- MAPA 3D -->
+  <section class="page" id="pg-mapa3d">
+    <div class="grid g21">
+      <div class="card" style="padding:10px"><div id="c3d"><div class="hint" style="padding:20px" id="c3dMsg">Carregando cena 3D…</div></div></div>
+      <div class="card"><h3>Detalhes</h3><div id="info3d"><p class="hint">Toque numa unidade, numa frente ou num caminhão para ver os detalhes.<br><br>A pilha de cana no pátio cresce com o estoque. A barra branca ao lado mostra as voltas: marca amarela = mínimo, vermelha = máximo. O farol em cima da moenda fica verde, amarelo (fora da faixa) ou vermelho piscando (moenda parada). Os caminhões na fila ficam enfileirados no pátio.</p></div></div>
+    </div>
+  </section>
+
+  <!-- COMPARATIVO -->
+  <section class="page" id="pg-comparativo">
+    <div class="card"><h3>Bússola × regra atual <span class="r">mesma cana, mesmas paradas; só muda a decisão de destino</span></h3>
+      <div class="explain" style="margin-bottom:10px"><b>Regra atual:</b> manda o caminhão para a unidade mais perto. Se ela estiver cheia (no máximo de voltas), manda para a próxima, sem olhar se a moenda está parada nem quantos caminhões já estão a caminho.</div>
+      <div class="tw"><table id="cmpTab"></table></div>
+    </div>
+    <div class="card mt"><h3>Custo logístico acumulado (R$)</h3>
+      <div class="legend"><span><i class="sw" style="background:var(--pA)"></i>Regra atual</span><span><i class="sw" style="background:var(--pB)"></i>Bússola</span></div>
+      <div class="chart" id="cmpChart"></div>
+    </div>
+  </section>
+
+  <!-- HISTÓRICO -->
+  <section class="page" id="pg-historico">
+    <div class="card">
+      <h3>Despachos <span class="r" id="hN"></span></h3>
+      <div class="frm" style="margin-bottom:10px">
+        <label>Destino<select id="hU"><option value="">Todas</option></select></label>
+        <label>Frente<select id="hF"><option value="">Todas</option></select></label>
+        <label>Buscar<input id="hQ" placeholder="frota ou motorista"></label>
+        <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="hDiff"> Só onde o Bússola mudou a decisão</label>
+      </div>
+      <div class="tw"><table id="hTab"></table></div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section class="page" id="pg-config">
+    <div class="card"><h3>Unidades</h3>
+      <div class="explain" style="margin-bottom:10px">Ajuste com os números reais do COA. <b>1 volta</b> = quantas toneladas de cana correspondem a uma volta na sua unidade. O <b>pátio sem fila</b> é até quantas voltas a cana descarrega direto, sem caminhão esperando.</div>
+      <div class="tw cfg"><table id="cfgU"></table></div>
+    </div>
+    <div class="grid g2 mt">
+      <div class="card cfg"><h3>Custos</h3><table id="cfgP"></table></div>
+      <div class="card"><h3>Cenários</h3>
+        <div class="explain">
+          <p><button class="btn y" id="casoBtn">Reproduzir o caso: unidades cheias + moenda parada</button></p>
+          <p>Iturama e Limeira ficam no máximo de voltas e Carneirinho para a moenda. Um caminhão carrega numa frente perto de Iturama. Veja o que a regra atual faz e o que o Bússola recomenda.</p>
+          <p><button class="btn ghost" id="resetBtn">Reiniciar simulação</button></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="tip" id="tip"></div>
+<div class="drawer" id="drawer"><button class="x" id="drawerX" aria-label="Fechar">×</button><div id="drawerBody"></div></div>
+
+<script>
+/* ============ utilidades ============ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fmt=(n,d=0)=>(+n).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const brl=n=>(n<0?'− ':'')+'R$ '+fmt(Math.abs(n),0);
+const hhmm=t=>{const m=((t%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(Math.floor(m%60)).padStart(2,'0')};
+const diaHora=t=>'Dia '+(Math.floor(t/1440)+1)+' · '+hhmm(t);
+const dur=m=>{if(!isFinite(m))return '—';m=Math.round(Math.max(0,m));const h=Math.floor(m/60),mm=m%60;return h?`${h}h${String(mm).padStart(2,'0')}`:`${mm} min`};
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+/* ============ cadastro ============ */
+// posições em km (Iturama = origem; x leste, y norte). Distância de estrada ≈ reta × 1,3 + 3 km
+const U=[
+  {id:'ITU',nome:'Iturama',x:0,y:0,tmin:16.5,tonV:500,minV:2,maxV:6,hiloV:2,est0:3.0,cv:'--s1'},
+  {id:'LIM',nome:'Limeira do Oeste',x:-40,y:20,tmin:11.0,tonV:330,minV:2,maxV:6,hiloV:2,est0:2.6,cv:'--s2'},
+  {id:'CAR',nome:'Carneirinho',x:-51,y:3,tmin:10.5,tonV:315,minV:2,maxV:6,hiloV:2,est0:3.4,cv:'--s3'},
+];
+const F=[
+  {id:'F01',nome:'Faz. Boa Vista',x:8,y:14,w:1.2},
+  {id:'F02',nome:'Faz. Santa Rita',x:-15,y:-12,w:1.1},
+  {id:'F03',nome:'Faz. Três Barras',x:-28,y:30,w:1.0},
+  {id:'F04',nome:'Faz. Córrego Fundo',x:-62,y:18,w:0.9},
+  {id:'F05',nome:'Faz. São Jerônimo',x:-70,y:-10,w:1.0},
+  {id:'F06',nome:'Faz. Água Limpa',x:-35,y:2,w:1.1},
+  {id:'F07',nome:'Faz. Pontal',x:18,y:-18,w:0.9},
+  {id:'F08',nome:'Faz. Bela Vista do Oeste',x:-50,y:36,w:0.8},
+];
+const P={diesel:6.20,kmLc:1.45,kmLv:2.2,descarga:12,diasSafra:240,colh:8,hora:280,precoATR:1.15,perdaATR:0.2,parada:500,velC:40,velV:50,cargaMed:66,oferta:1.0,pesoFila:1,limiar:150,pesoBonus:0.3};
+const PLAB={diesel:['Diesel','R$/L'],kmLc:['Consumo rodotrem carregado','km/L'],kmLv:['Consumo rodotrem vazio','km/L'],descarga:['Tempo de descarga na usina','min'],colh:['Custo de colhedora parada esperando caminhão','R$/min por colhedora'],diasSafra:['Dias de safra','dias'],hora:['Custo hora do caminhão','R$/h'],precoATR:['Preço do ATR','R$/kg'],perdaATR:['Perda de ATR da cana parada','kg/t por hora'],parada:['Custo de moenda parada sem cana','R$/min'],velC:['Velocidade carregado','km/h'],velV:['Velocidade vazio','km/h'],oferta:['Ritmo do corte (1 = igual à moagem)','×'],pesoFila:['Peso da fila na decisão (0 a 1)','fila desviada vira fila em outra unidade'],limiar:['Só desvia da unidade mais perto se economizar mais que','R$ por caminhão'],pesoBonus:['Peso do risco de faltar cana (0 a 1)','previsão de falta é incerta']};
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y)*1.3+3;
+const D=F.map(f=>U.map(u=>dist(f,u)));
+const dieselL=d=>d/P.kmLc+d/P.kmLv; // litros ida (carregado) + volta (vazio)
+const ucol=i=>cssv(U[i].cv);
+const capTotal=()=>U.reduce((a,u)=>a+u.tmin,0);
+const sumW=F.reduce((a,f)=>a+f.w,0);
+const T0=6*60;
+
+/* ============ frota, motoristas e turnos ============ */
+const NOMES=['José','João','Antônio','Francisco','Carlos','Paulo','Pedro','Lucas','Luiz','Marcos','Gabriel','Rafael','Daniel','Marcelo','Bruno','Eduardo','Felipe','Raimundo','Rodrigo','Manoel','Sebastião','Fábio','Roberto','Márcio','Jorge','Edson','Sérgio','Valdir','Adriano','Cláudio','Wellington','Reinaldo','Gilmar','Odair','Ailton','Joel','Renato','Wesley','Diego','Cleiton','Vanderlei','Juliano'];
+const SOBRE=['Silva','Santos','Oliveira','Souza','Rodrigues','Ferreira','Alves','Pereira','Lima','Gomes','Costa','Ribeiro','Martins','Carvalho','Almeida','Lopes','Soares','Fernandes','Vieira','Barbosa','Rocha','Dias','Nascimento','Andrade','Moreira','Nunes','Marques','Machado','Mendes','Freitas','Queiroz','Prado'];
+const MODELOS=[['Scania R 450',72],['Volvo FH 540',74],['Mercedes Actros 2651',70],['DAF XF 530',72],['Volvo FH 460',70]];
+const TURNOS=[{id:'A',ini:7,fim:15},{id:'B',ini:15,fim:23},{id:'C',ini:23,fim:7}];
+const turnoIdx=t=>{const h=(((t%1440)+1440)%1440)/60;return h>=7&&h<15?0:h>=15&&h<23?1:2};
+const turnoTxt=i=>`Turno ${TURNOS[i].id} (${String(TURNOS[i].ini).padStart(2,'0')}h–${String(TURNOS[i].fim).padStart(2,'0')}h)`;
+const turnoIni=t=>{const d=Math.floor(t/1440)*1440,h=(((t%1440)+1440)%1440)/60;return h>=7&&h<15?d+420:h>=15&&h<23?d+900:h>=23?d+1380:d-60};
+let FLEET=[];
+function buildFleet(){const r=mulberry32(99),L='ABCDEFGHJKLMNPRSTUVWXYZ',pick=a=>a[Math.floor(r()*a.length)];FLEET=[];let n=0;
+  F.forEach((f,j)=>{f.colh=Array.from({length:f.w>=1.1?3:2},(_,c)=>'CH-'+(7101+j*10+c));
+    // frota própria da frente: ritmo de cargas × tempo de ciclo (ida + volta + fila média) com 20% de folga
+    const lam=capTotal()*60/P.cargaMed*f.w/sumW,dn=Math.min(...D[j]),cyc=dn/P.velC+dn/P.velV+1.1;f.nFrota=Math.ceil(lam*cyc*1.2);
+    for(let q=0;q<f.nFrota;q++){const m=pick(MODELOS);FLEET.push({frota:String(3101+n),placa:'R'+pick(L)+pick(L)+Math.floor(r()*10)+pick(L)+String(Math.floor(r()*100)).padStart(2,'0'),modelo:m[0],cap:m[1],home:j,mot:[0,1,2].map(()=>pick(NOMES)+' '+pick(SOBRE))});n++}})}
+function vmeta(sim,vi){return vi<FLEET.length?FLEET[vi]:sim.extra[vi-FLEET.length]}
+buildFleet();
+
+
+/* ============ eventos externos (iguais para as duas políticas) ============ */
+let STOPS,SP,nextF,nextC,spId,rngS,rngP,SEED=[34,62],STOPCFG={gap:[5,8],dur:[35,100]};
+function initExo(){
+  rngS=mulberry32(SEED[0]); rngP=mulberry32(SEED[1]); STOPS=[]; SP=[]; spId=100;
+  const tipos=['Embuchamento na moenda','Troca de facas','Falta de vapor','Manutenção corretiva','Quebra na esteira'];
+  U.forEach((u,i)=>{let t=T0+90+rngS()*360;while(t<T0+30*1440){const d=STOPCFG.dur[0]+rngS()*STOPCFG.dur[1];const prog=rngS()<0.25;STOPS.push({u:i,ini:t,fim:t+d,tipo:prog?'Parada programada':tipos[Math.floor(rngS()*tipos.length)],prog});t+=d+(STOPCFG.gap[0]+rngS()*STOPCFG.gap[1])*60;}});
+  nextF=F.map(()=>T0+rngP()*12);nextC=F.map(()=>58+rngP()*16);
+}
+const stopAt=(i,t)=>STOPS.find(s=>s.u===i&&t>=s.ini&&t<s.fim)||null;
+const rateAt=(i,t)=>stopAt(i,t)?0:U[i].tmin;
+// o COA só conhece paradas já começadas (com previsão de volta) e as programadas
+const knownStop=(i,tau,now)=>STOPS.find(s=>s.u===i&&tau>=s.ini&&tau<s.fim&&(s.prog||s.ini<=now))||null;
+const rateKnown=(i,tau,now)=>knownStop(i,tau,now)?0:U[i].tmin;
+// ritmo do corte: oscila no dia, cai na troca de turno e o COA ajusta conforme o estoque das unidades
+function ctrlCorte(){if(!SB)return 1;const vm=(SB.est.reduce((a,e,i)=>a+e/U[i].tonV,0)+SA.est.reduce((a,e,i)=>a+e/U[i].tonV,0))/(2*U.length);return Math.max(0.85,Math.min(1.12,1-0.06*(vm-3.5)))}
+function fator(t){const h=(t%1440)/60;let f=P.oferta*(1+0.06*Math.sin((h-9)/24*2*Math.PI));for(const tr of [7,15,23]){if(Math.abs(h-tr)<0.4)f*=0.55}return f}
+const capCorte=t=>0.5*capTotal()+0.5*U.reduce((a,u,i)=>a+rateKnown(i,t,t),0);
+function genSpawns(tEnd){
+  const novos=[];
+  for(let j=0;j<F.length;j++){while(nextF[j]<=tEnd){const t=nextF[j];const carga=nextC[j];novos.push({id:'C-'+(spId++),f:j,carga,t,corte:t-(20+rngP()*50)});nextC[j]=58+rngP()*16;const lam=capCorte(t)*60/P.cargaMed*F[j].w/sumW*fator(t)*ctrlCorte()/60;nextF[j]=t+(-Math.log(1-rngP()))/lam;}}
+  novos.sort((a,b)=>a.t-b.t); for(const n of novos)SP.push(n);
+}
+
+/* ============ simulação ============ */
+function newSim(policy){return{policy,t:T0,est:U.map(u=>u.est0*u.tonV),falta:U.map(()=>0),moido:U.map(()=>0),tr:[],sp:0,k:{diesel:0,hcam:0,atr:0,falta:0,desp:0,parada:0,fila:0,nFila:0,km:0},log:[],arr:U.map(u=>Array.from({length:24},(_,k)=>[T0-120+k*5,u.tmin*5])),zona:U.map(()=>'ok'),veh:FLEET.map(()=>({trips:0,tons:0,km:0,tCheg:T0})),pool:F.map((f,j)=>FLEET.map((v,i)=>i).filter(i=>FLEET[i].home===j)),extra:[],terc:0,lastSp:F.map(()=>T0),drv:{},trips:[],force:F.map(()=>null)}}
+const kTotal=k=>k.diesel+k.hcam+k.atr+k.falta;
+
+function project(sim,i,t0,t1,ex){
+  let S=sim.est[i],idle=0;const h=5;const ser=[[t0,S]];
+  const arr=sim.tr.filter(k=>k.u===i&&k.st==='ida').map(k=>[k.eta,k.carga]);
+  for(let tau=t0;tau<t1-1e-9;tau+=h){
+    const hh=Math.min(h,t1-tau);
+    for(const a of arr)if(a[0]>=tau&&a[0]<tau+hh)S+=a[1];
+    if(ex)S+=ex(tau)*hh;
+    const r=rateKnown(i,tau,t0),m=r*hh;
+    if(S>=m)S-=m;else{if(r>0)idle+=(m-S)/r;S=0}
+    ser.push([tau+hh,S]);
+  }
+  return{S,idle,ser};
+}
+
+function exFor(sim,i,t){const lastEta=sim.tr.reduce((m,k)=>k.u===i&&k.st==='ida'?Math.max(m,k.eta):m,t);const rin=inflowRate(sim,i);return tau=>tau>lastEta?rin:0}
+function avaliar(sim,j,carga,t){
+  return U.map((u,i)=>{
+    const d=D[j][i],tIda=d/P.velC*60,tVolta=d/P.velV*60,eta=t+tIda;
+    // conta os caminhões que já estão a caminho e, depois deles, a cana que costuma chegar (média das últimas 2h)
+    const ex=exFor(sim,i,t);const pr=project(sim,i,t,eta,ex),Sp=pr.S,r=u.tmin;
+    const hilo=u.hiloV*u.tonV,maxT=u.maxV*u.tonV,minT=u.minV*u.tonV;
+    const st=knownStop(i,eta,t);const extra=st?st.fim-eta:0;
+    const Wq=Math.max(0,Sp-hilo)/r,W=Wq+extra;
+    const diesel=dieselL(d)*P.diesel,viagem=(tIda+tVolta)/60*P.hora,espera=extra/60*P.hora,fila=Wq/60*P.hora*P.pesoFila,hcam=viagem+espera+fila,atr=carga*P.perdaATR*(tIda+W)/60*P.precoATR;
+    const over=Math.max(0,Sp+carga-maxT),pen=over/r/60*P.hora;
+    // bônus: minutos de moenda sem cana que esta carga evita na 1ª hora após a chegada
+    let bonus=0;if(!st){const pr2=project(sim,i,t,eta+60,ex);const idleAfter=Math.max(0,pr2.idle-pr.idle);bonus=Math.min(idleAfter,carga/r)*P.parada*P.pesoBonus}
+    return{i,d,tIda,eta,Sp,W,Wq,viagem,espera,fila,diesel,hcam,atr,pen,bonus,total:diesel+hcam+atr+pen-bonus,parada:!!st,stop:st,cheia:Sp+carga>maxT,idle:pr.idle};
+  });
+}
+// escolhe o menor custo, mas só tira o caminhão da unidade mais perto se compensar mais que o limiar
+const maisPerto=j=>U.map((u,i)=>i).sort((a,b)=>D[j][a]-D[j][b])[0];
+function escolher(av,j){const best=av.reduce((b,x)=>x.total<b.total?x:b),n=av[maisPerto(j)];if(best!==n&&!n.parada&&!n.cheia&&n.total-best.total<P.limiar)return n;return best}
+function regraAtual(sim,j){
+  const ord=U.map((u,i)=>i).sort((a,b)=>D[j][a]-D[j][b]);
+  for(const i of ord)if(sim.est[i]<U[i].maxV*U[i].tonV)return i;
+  return ord.reduce((b,i)=>sim.est[i]/U[i].tonV<sim.est[b]/U[b].tonV?i:b,ord[0]);
+}
+function terceiro(sim,j){const n=sim.extra.length,r=mulberry32(500+n);const L='ABCDEFGHJKLMNPRSTUVWXYZ';return{frota:'T-'+(901+n),placa:'Q'+L[Math.floor(r()*23)]+L[Math.floor(r()*23)]+Math.floor(r()*10)+L[Math.floor(r()*23)]+String(Math.floor(r()*100)).padStart(2,'0'),modelo:'Terceiro · rodotrem',cap:70,home:j,terceiro:true,mot:[0,1,2].map(q=>NOMES[Math.floor(r()*NOMES.length)]+' '+SOBRE[Math.floor(r()*SOBRE.length)])}}
+function despachar(sim,s){
+  // pega o caminhão que estava carregando na frente; se a frota da frente estiver toda na rua, aciona um terceiro
+  let vi;const pool=sim.pool[s.f];
+  if(pool.length)vi=pool.shift();else{vi=FLEET.length+sim.extra.length;sim.extra.push(terceiro(sim,s.f));sim.veh.push({trips:0,tons:0,km:0});sim.terc++;if(sim.policy==='b')feed('warn',`${F[s.f].id}: toda a frota da frente está na rua. Acionado o terceiro ${sim.extra[sim.extra.length-1].frota}.`)}
+  const meta=vmeta(sim,vi),ti=turnoIdx(sim.t),carga=Math.min(s.carga,meta.cap);s={...s,id:meta.frota,carga};
+  sim.lastSp[s.f]=sim.t;
+  let i,av=null,iA=null;
+  if(sim.policy==='b'){av=avaliar(sim,s.f,s.carga,sim.t);i=escolher(av,s.f).i;iA=regraAtual(sim,s.f);if(sim.force[s.f]!=null){i=sim.force[s.f];sim.force[s.f]=null;feed('ok',`${s.id} saiu de ${F[s.f].id} direto para <b>${U[i].nome}</b>, como a sugestão aplicada pediu.`)}}
+  else i=regraAtual(sim,s.f);
+  const d=D[s.f][i];
+  const k={id:s.id,v:vi,mot:meta.mot[ti],turno:ti,f:s.f,u:i,carga:s.carga,corte:s.corte,tSai:sim.t,d,eta:sim.t+d/P.velC*60,st:'ida'};
+  sim.tr.push(k);sim.k.desp++;sim.k.diesel+=dieselL(d)*P.diesel;sim.k.km+=2*d;
+  if(sim.policy==='b'){
+    const best=av[i],alt=av[iA];
+    const e={t:sim.t,id:s.id,v:vi,mot:k.mot,turno:ti,f:s.f,u:i,carga:s.carga,d,W:best.W,Sp:best.Sp,total:best.total,uA:iA,delta:alt.total-best.total};
+    sim.log.push(e);if(sim.log.length>3000)sim.log.shift();
+    if(iA!==i&&e.delta>80){
+      const why=alt.parada?`${U[iA].nome} está com a moenda parada`:alt.cheia?`${U[iA].nome} vai chegar acima do máximo de voltas`:`fila em ${U[iA].nome} de ${dur(alt.W)} contra ${dur(best.W)}`;
+      feed('ok',`${s.id} (${F[s.f].id}) → <b>${U[i].nome}</b> em vez de ${U[iA].nome}: ${why}. Economia ≈ ${brl(e.delta)}.`);
+    }
+    if(alt.parada&&iA!==i)feed('crit',`A regra atual mandaria ${s.id} para ${U[iA].nome}, que está com a moenda parada. O Bússola desviou.`);
+  }
+  return i;
+}
+function step(sim,dt){
+  const t1=sim.t+dt;
+  while(sim.sp<SP.length&&SP[sim.sp].t<=t1){despachar(sim,SP[sim.sp++])}
+  for(const k of sim.tr){
+    if(k.st==='ida'&&k.eta<=t1){
+      const i=k.u,u=U[i],st=stopAt(i,k.eta),hilo=u.hiloV*u.tonV;
+      let W=Math.max(0,sim.est[i]-hilo)/u.tmin;
+      if(st){W+=st.fim-k.eta;sim.k.parada++;if(sim.policy==='b')feed('warn',`${k.id} chegou em ${u.nome} com a moenda parada (${st.tipo}). Espera extra de ${dur(st.fim-k.eta)}.`)}
+      sim.est[i]+=k.carga;k.st='fila';k.tLib=k.eta+W;k.W=W;
+      sim.k.fila+=W;sim.k.nFila++;sim.k.atr+=k.carga*P.perdaATR*((k.eta-k.corte)+W)/60*P.precoATR;
+      sim.arr[i].push([k.eta,k.carga]);if(sim.arr[i].length>400)sim.arr[i].shift();
+    }
+    if(k.st==='fila'&&k.tLib<=t1){k.st='volta';k.tFim=k.tLib+k.d/P.velV*60}
+    if(k.st==='volta'&&k.tFim<=t1&&k.desloc){k.st='fim';sim.k.hcam+=(k.tFim-k.tSai)/60*P.hora;sim.pool[k.f].push(k.v);sim.veh[k.v].tCheg=k.tFim;if(sim.policy==='b')feed('ok',`Frota ${k.id} chegou remanejada em ${F[k.f].id}.`);continue}
+    if(k.st==='volta'&&k.tFim<=t1){k.st='fim';sim.k.hcam+=(k.tFim-k.tSai)/60*P.hora;
+      const V=sim.veh[k.v];V.trips++;V.tons+=k.carga;V.km+=2*k.d;V.lit=(V.lit||0)+dieselL(k.d);const dr=sim.drv[k.mot]||(sim.drv[k.mot]={v:0,t:0,km:0});dr.v++;dr.t+=k.carga;dr.km+=2*k.d;
+      if(k.v<FLEET.length){sim.pool[k.f].push(k.v);V.tCheg=k.tFim}
+      if(sim.policy==='b'){sim.trips.push({v:k.v,frota:k.id,mot:k.mot,turno:k.turno,dk:k.v+'-'+k.turno,f:k.f,u:k.u,carga:k.carga,d:k.d,tSai:k.tSai,tFim:k.tFim,W:k.W||0,ciclo:k.tFim-k.tSai});if(sim.trips.length>8000)sim.trips.shift()}}
+  }
+  sim.tr=sim.tr.filter(k=>k.st!=='fim');
+  U.forEach((u,i)=>{
+    const r=rateAt(i,sim.t),m=r*dt;
+    if(sim.est[i]>=m){sim.est[i]-=m;sim.moido[i]+=m}
+    else{if(r>0){const idle=(m-sim.est[i])/r;sim.falta[i]+=idle;sim.k.falta+=idle*P.parada}sim.moido[i]+=sim.est[i];sim.est[i]=0}
+    if(sim.policy==='b'){
+      const v=sim.est[i]/u.tonV,z=v<=0.05&&r>0?'seca':v<u.minV?'baixo':v>u.maxV?'alto':'ok';
+      if(z!==sim.zona[i]){
+        if(z==='seca')feed('crit',`${u.nome}: moenda sem cana! Estoque zerado.`);
+        else if(z==='baixo'&&sim.zona[i]!=='seca')feed('warn',`${u.nome} abaixo do mínimo (${fmt(v,1)} voltas). Prioridade de envio.`);
+        else if(z==='alto')feed('warn',`${u.nome} acima do máximo (${fmt(v,1)} voltas). Pátio cheio, desviando caminhões.`);
+        else if(z==='ok')feed('inf',`${u.nome} voltou à faixa normal (${fmt(v,1)} voltas).`);
+        sim.zona[i]=z;
+      }
+    }
+  });
+  sim.t=t1;
+}
+
+/* ============ motor ============ */
+let SB,SA,HIST,FEED,speed=60,quiet=false;
+function feed(tipo,txt){if(quiet)return;FEED.unshift({t:SB.t,tipo,txt});if(FEED.length>80)FEED.pop()}
+function checkStops(t0,t1){for(const s of STOPS){if(s.ini>t0&&s.ini<=t1)feed('crit',`Moenda parada em <b>${U[s.u].nome}</b>: ${s.tipo}. Previsão de volta às ${hhmm(s.fim)}.`);if(s.fim>t0&&s.fim<=t1)feed('ok',`${U[s.u].nome} voltou a moer.`)}}
+function record(){HIST.push({t:SB.t,v:SB.est.map((e,i)=>e/U[i].tonV),cB:kTotal(SB.k),cA:kTotal(SA.k),tmin:U.reduce((a,u,i)=>a+rateAt(i,SB.t),0),rota:SB.tr.length,falta:SB.falta.reduce((a,b)=>a+b,0)});if(HIST.length>9000)HIST.shift()}
+function advance(dt){
+  let rem=dt;
+  while(rem>1e-9){const h=Math.min(0.5,rem),t0=SB.t;genSpawns(SB.t+h+2);step(SB,h);step(SA,h);checkStops(t0,SB.t);if(turnoIdx(t0)!==turnoIdx(SB.t))feed('inf',`Troca de turno: começou o <b>${turnoTxt(turnoIdx(SB.t))}</b>.`);rem-=h;if(Math.floor(SB.t/5)>Math.floor(t0/5))record()}
+}
+function reset(){initExo();SB=newSim('b');SA=newSim('a');HIST=[];FEED=[];quiet=true;advance(24*60);quiet=false;FEED=[];feed('inf','Simulação iniciada com 26 horas de histórico. Bússola ativo nas 3 unidades do COA.');advance(2*60);}
+
+/* ============ frota: consultas ============ */
+// caminhão que está carregando agora na frente j (1º da fila de vazios) e quanto já encheu
+function loadingAt(sim,j){const vi=sim.pool[j].length?sim.pool[j][0]:null;let end=nextF[j],carga=nextC[j];
+  for(let q=sim.sp;q<SP.length;q++)if(SP[q].f===j){end=SP[q].t;carga=SP[q].carga;break}
+  const st=sim.lastSp[j],fill=Math.max(0,Math.min(1,(sim.t-st)/((end-st)||1)));return{vi,fill,end,carga:vi!=null?Math.min(carga,FLEET[vi].cap):carga,start:st}}
+function vehState(sim,vi){const k=sim.tr.find(x=>x.v===vi);if(k)return{st:k.st,k};
+  for(let j=0;j<F.length;j++){const q=sim.pool[j].indexOf(vi);if(q===0)return{st:'carregando',j,q};if(q>0)return{st:'aguardando',j,q}}return{st:'saiu'}}
+const ST_TXT={carregando:['Carregando na frente','warn'],aguardando:['Aguardando na frente','neu'],ida:['Carregado → usina','ok'],fila:['Na fila da usina','warn'],volta:['Vazio, voltando','neu'],saiu:['Liberado (terceiro)','neu']};
+const ritmoFrente=(j,t)=>capCorte(t)*fator(t)*ctrlCorte()*60*F[j].w/sumW; // t/h
+function destPrev(j){const L=loadingAt(SB,j);return escolher(avaliar(SB,j,L.carga,SB.t),j)}
+
+/* ============ previsão ============ */
+function inflowRate(sim,i,win=120){const t0=sim.t-win;return sim.arr[i].filter(a=>a[0]>=t0).reduce((s,a)=>s+a[1],0)/win}
+function previsao(i,h=360){
+  const t0=SB.t,u=U[i];const ins=SB.tr.filter(k=>k.u===i&&k.st==='ida');
+  const lastEta=ins.reduce((m,k)=>Math.max(m,k.eta),t0);const rin=inflowRate(SB,i);
+  const pr=project(SB,i,t0,t0+h,tau=>tau>lastEta?rin:0);
+  let enche=null,minimo=null,seca=null;
+  for(const [t,S] of pr.ser){const v=S/u.tonV;if(enche===null&&v>=u.maxV)enche=t-t0;if(minimo===null&&v<=u.minV)minimo=t-t0;if(seca===null&&S<=0&&rateKnown(i,t,t0)>0)seca=t-t0}
+  return{ser:pr.ser.map(([t,S])=>[t,S/u.tonV]),enche,minimo,seca,rin,ins:ins.length,insT:ins.reduce((s,k)=>s+k.carga,0),lastEta};
+}
+
+/* ============ gráficos ============ */
+const tip=$('#tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const w=tip.offsetWidth,hh=tip.offsetHeight;let L=x+14,T=y-hh-10;if(L+w>innerWidth-8)L=x-w-14;if(T<8)T=y+16;tip.style.left=L+'px';tip.style.top=T+'px'}
+function hideTip(){tip.style.opacity=0}
+function spark(vals,color){if(vals.length<2)return'<svg></svg>';const W=120,H=30,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;const p=vals.map((v,i)=>`${(i/(vals.length-1)*W).toFixed(1)},${(H-3-(v-mn)/r*(H-6)).toFixed(1)}`).join(' ');return`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline points="${p}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`}
+function lineChart(el,o){
+  if(el._hover)return;
+  const W=Math.max(280,el.clientWidth||600),H=o.h||220,m={l:46,r:o.rpad||14,t:10,b:24};
+  const sx=x=>m.l+(x-o.x0)/(o.x1-o.x0)*(W-m.l-m.r),sy=y=>H-m.b-(y-o.y0)/(o.y1-o.y0)*(H-m.t-m.b);
+  const grid=cssv('--grid'),mute=cssv('--mute'),ink=cssv('--ink');
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  for(const b of (o.bands||[]))s+=`<rect x="${m.l}" y="${sy(b.y1)}" width="${W-m.l-m.r}" height="${Math.max(0,sy(b.y0)-sy(b.y1))}" fill="${b.color}" opacity="${b.op||.10}"/>`;
+  const yt=o.yt||5;for(let k=0;k<=yt;k++){const y=o.y0+(o.y1-o.y0)*k/yt;s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${sy(y)}" y2="${sy(y)}" stroke="${grid}"/><text x="${m.l-6}" y="${sy(y)+4}" text-anchor="end" font-size="10.5" fill="${mute}" font-family="JetBrains Mono, ui-monospace, monospace">${o.fy(y)}</text>`}
+  const step=o.xstep||120;for(let x=Math.ceil(o.x0/step)*step;x<=o.x1;x+=step)s+=`<text x="${sx(x)}" y="${H-6}" text-anchor="middle" font-size="10.5" fill="${mute}" font-family="JetBrains Mono, ui-monospace, monospace">${hhmm(x)}</text>`;
+  for(const r of (o.refs||[]))s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${sy(r.y)}" y2="${sy(r.y)}" stroke="${r.color}" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${W-m.r-4}" y="${sy(r.y)-4}" text-anchor="end" font-size="10.5" font-weight="700" fill="${r.color}">${r.label}</text>`;
+  if(o.nowX!=null)s+=`<line x1="${sx(o.nowX)}" x2="${sx(o.nowX)}" y1="${m.t}" y2="${H-m.b}" stroke="${ink}" stroke-width="1" opacity=".35"/><text x="${sx(o.nowX)+4}" y="${m.t+10}" font-size="10" fill="${mute}">agora</text>`;
+  for(const se of o.series){if(se.pts.length<2)continue;const d=se.pts.map((p,k)=>(k?'L':'M')+sx(p[0]).toFixed(1)+','+sy(Math.min(o.y1,Math.max(o.y0,p[1]))).toFixed(1)).join('');s+=`<path d="${d}" fill="none" stroke="${se.color}" stroke-width="2" stroke-linejoin="round" ${se.dash?'stroke-dasharray="6 4"':''}/>`;
+    if(se.label){const lp=se.pts[se.pts.length-1];const other=o.series.find(x=>x!==se&&x.label&&x.pts.length);const below=other&&lp[1]<other.pts[other.pts.length-1][1];s+=`<text x="${sx(lp[0])+6}" y="${sy(lp[1])+(below?14:-4)}" font-size="11" font-weight="700" fill="${ink}">${se.label}</text>`}}
+  s+=`<g id="hv"></g><rect x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent" style="cursor:crosshair"/></svg>`;
+  el.innerHTML=s;
+  const svg=el.querySelector('svg'),hv=svg.querySelector('#hv'),rect=svg.querySelector('rect:last-of-type');
+  const move=ev=>{const pt=ev.touches?ev.touches[0]:ev;const bb=svg.getBoundingClientRect();const px=(pt.clientX-bb.left)*W/bb.width;const x=o.x0+(px-m.l)/(W-m.l-m.r)*(o.x1-o.x0);
+    let html=`<div style="opacity:.7;margin-bottom:3px">${diaHora(x)}</div>`,g=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${m.t}" y2="${H-m.b}" stroke="${ink}" opacity=".4"/>`;
+    for(const se of o.series){if(!se.pts.length)continue;let best=null,bd=1e9;for(const p of se.pts){const dd=Math.abs(p[0]-x);if(dd<bd){bd=dd;best=p}}if(!best||bd>(o.x1-o.x0)/40)continue;g+=`<circle cx="${sx(best[0])}" cy="${sy(Math.min(o.y1,Math.max(o.y0,best[1])))}" r="4.5" fill="${se.color}" stroke="${cssv('--card')}" stroke-width="2"/>`;html+=`<div><span class="sw" style="background:${se.color}"></span>${se.name}: <b>${o.fy(best[1],true)}</b></div>`}
+    hv.innerHTML=g;showTip(html,pt.clientX,pt.clientY)};
+  rect.addEventListener('mousemove',move);rect.addEventListener('touchmove',e=>{move(e)},{passive:true});rect.addEventListener('touchstart',e=>{el._hover=true;move(e)},{passive:true});
+  rect.addEventListener('mouseenter',()=>el._hover=true);
+  const out=()=>{el._hover=false;hv.innerHTML='';hideTip()};rect.addEventListener('mouseleave',out);rect.addEventListener('touchend',()=>setTimeout(out,1500));
+}
+
+/* ============ páginas ============ */
+let PAGE='geral';
+const TITLES={sugestoes:'Sugestões do Bússola',motoristas:'Motoristas & turnos',rotas:'Calculadora de rota',geral:'Visão geral',despacho:'Despacho',frota:'Frota & frentes de serviço',predicao:'Predição de estoque',mapa3d:'Mapa 3D ao vivo',comparativo:'Comparativo',historico:'Histórico de despachos',config:'Configurações'};
+function go(p){PAGE=p;$$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.pg===p));$$('.page').forEach(s=>s.classList.toggle('on',s.id==='pg-'+p));$('#ttl').textContent=TITLES[p];hideTip();
+  if(p==='despacho'){syncCarga();calcDesp()}if(p==='rotas')renderRotas();if(p==='sugestoes')renderSug(true);if(p==='motoristas')renderMot();if(p==='historico')renderHist();if(p==='config')renderCfg();if(p==='mapa3d'){init3D();setTimeout(resize3D,30)}render(true)}
+$$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.pg));
+
+function statusUnit(i){const u=U[i],st=stopAt(i,SB.t),v=SB.est[i]/u.tonV;
+  if(st)return{c:'crit',t:'⏸ Moenda parada'};if(v<=0.05)return{c:'crit',t:'⚠ Sem cana'};if(v<u.minV)return{c:'warn',t:'▼ Abaixo do mínimo'};if(v>u.maxV)return{c:'warn',t:'▲ Acima do máximo'};return{c:'ok',t:'● Moendo'}}
+
+function renderGeral(){
+  const H=HIST.slice(-96);const last=HIST[HIST.length-1]||{};
+  const tm=U.reduce((a,u,i)=>a+rateAt(i,SB.t),0);
+  const vm=SB.est.reduce((a,e,i)=>a+e/U[i].tonV,0)/U.length;
+  const fila=SB.tr.filter(k=>k.st==='fila').length;
+  const eco=kTotal(SA.k)-kTotal(SB.k);
+  const fB=SB.falta.reduce((a,b)=>a+b,0),fA=SA.falta.reduce((a,b)=>a+b,0);
+  const alerts=U.filter((u,i)=>statusUnit(i).c!=='ok').length;
+  const K=[
+    ['Moagem agora',fmt(tm,1)+' t/min',`${fmt(tm*60,0)} t/h nas 3 unidades`,H.map(h=>h.tmin),cssv('--g2')],
+    ['Estoque médio',fmt(vm,1)+' voltas','faixa ideal: mínimo a máximo',H.map(h=>h.v.reduce((a,b)=>a+b,0)/h.v.length),cssv('--g2')],
+    ['Caminhões em rota',SB.tr.length,`${fila} na fila das unidades`,H.map(h=>h.rota),cssv('--g2')],
+    ['Economia × regra atual',brl(eco),'custo logístico acumulado',H.map(h=>h.cA-h.cB),cssv('--pB')],
+    ['Moenda sem cana',dur(fB),`regra atual: ${dur(fA)}`,H.map(h=>h.falta),cssv('--g2')],
+    ['Alertas ativos',alerts,alerts?'veja os cartões das unidades':'tudo dentro da faixa',H.map(h=>h.v.filter((v,i)=>v<U[i].minV||v>U[i].maxV).length),cssv(alerts?'--crit':'--g2')],
+  ];
+  $('#kpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div>${spark(k[3],k[4])}</div>`).join('');
+  $('#ucards').innerHTML=U.map((u,i)=>{
+    const v=SB.est[i]/u.tonV,st=statusUnit(i),stop=stopAt(i,SB.t),pv=previsao(i,240);const maxS=8;
+    const W=Math.max(0,SB.est[i]-u.hiloV*u.tonV)/u.tmin+(stop?stop.fim-SB.t:0);
+    const nf=SB.tr.filter(k=>k.u===i&&k.st==='fila').length;
+    const prox=pv.seca!=null?`seca em ${dur(pv.seca)}`:pv.enche!=null&&v<u.maxV?`enche em ${dur(pv.enche)}`:pv.minimo!=null&&v>u.minV?`mínimo em ${dur(pv.minimo)}`:'estável 4h';
+    return`<div class="card ucard"><div class="bar" style="background:${ucol(i)}"></div>
+      <div class="uhead"><b>${u.nome}</b><span class="pill ${st.c}">${st.t}</span></div>
+      <div class="voltas"><span class="big">${fmt(v,1)}</span><span>voltas · ${fmt(SB.est[i],0)} t</span></div>
+      <div class="gauge"><div class="zone" style="left:0;width:${u.minV/maxS*100}%;background:var(--warnBg)"></div><div class="zone" style="left:${u.maxV/maxS*100}%;right:0;background:var(--critBg)"></div>
+        <div class="fill" style="width:${Math.min(100,v/maxS*100)}%;background:${ucol(i)}"></div>
+        <div class="tick" style="left:${u.minV/maxS*100}%"></div><div class="tick" style="left:${u.maxV/maxS*100}%"></div></div>
+      <div class="gscale"><span>0</span><span>mín ${u.minV}</span><span>máx ${u.maxV}</span><span>${maxS}</span></div>
+      <div class="umet">
+        <div>Moagem<b>${stop?'0,0':fmt(u.tmin,1)} t/min</b></div>
+        <div>Autonomia<b>${stop?'parada até '+hhmm(stop.fim):dur(SB.est[i]/u.tmin)}</b></div>
+        <div>Fila agora<b>${nf} cam. · ${dur(W)}</b></div>
+        <div>Previsão<b>${prox}</b></div>
+        <div>A caminho<b>${pv.ins} cam. · ${fmt(pv.insT,0)} t</b></div>
+        <div>Moído hoje<b>${fmt(SB.moido[i]/1000,1)} mil t</b></div>
+      </div></div>`}).join('');
+  renderMap();
+  const loads=F.map((f,j)=>({j,...loadingAt(SB,j)})).filter(x=>x.vi!=null).sort((a,b)=>b.fill-a.fill);
+  $('#loadList').innerHTML=loads.length?loads.map(x=>{const m=FLEET[x.vi],d=destPrev(x.j),ti=turnoIdx(SB.t);return`<div class="lrow" data-o="t:${x.vi}"><div><b>${m.frota}</b><div class="sub">${F[x.j].id}</div></div>
+    <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>${m.mot[ti]}</span><span class="num"><b>${fmt(x.fill*100,0)}%</b> · ~${fmt(x.carga*x.fill,0)} de ${fmt(x.carga,0)} t</span></div><div class="prog sm"><div style="width:${x.fill*100}%;background:${x.fill>.85?'var(--ok)':'var(--g2)'}"></div></div></div>
+    <div style="text-align:right"><b>${dur(x.end-SB.t)}</b><div class="sub">→ <span style="color:${ucol(d.i)};font-weight:700">${U[d.i].nome.replace(' do Oeste','')}</span></div></div></div>`}).join(''):'<p class="hint">Nenhum caminhão nas frentes agora.</p>';
+  {const ti=turnoIdx(SB.t),t0=turnoIni(SB.t),fim=t0+480,L=SB.log.filter(e=>e.t>=t0),ton=L.reduce((a,e)=>a+e.carga,0);
+   const own=FLEET.length,rua=SB.tr.filter(k=>k.v<FLEET.length).length;
+   $('#turnoCard').innerHTML=`<div class="fk">${turnoTxt(ti)}</div><div class="ft">${TURNOS[ti].id}</div><div class="fs">troca em <b>${dur(fim-SB.t)}</b> (às ${String(TURNOS[ti].fim).padStart(2,'0')}:00)</div>
+     <div class="prog sm mt"><div style="width:${Math.min(100,(SB.t-t0)/480*100)}%;background:var(--acc)"></div></div>
+     <div class="kv mt"><div>Viagens no turno<b>${L.length}</b></div><div>Toneladas no turno<b>${fmt(ton,0)} t</b></div><div>Motoristas em serviço<b>${own+SB.tr.filter(k=>k.v>=FLEET.length).length}</b></div><div>Caminhões na rua<b>${rua} de ${own}</b></div><div>Terceiros acionados<b>${SB.terc}</b></div><div>Média por viagem<b>${L.length?fmt(ton/L.length,1):'—'} t</b></div></div>`}
+  $('#feed').innerHTML=FEED.slice(0,40).map(e=>`<div class="ev"><time>${hhmm(e.t)}</time><i class="${e.tipo}">${{ok:'✓',warn:'!',crit:'×',inf:'i'}[e.tipo]}</i><div>${e.txt}</div></div>`).join('');
+  $('#feedN').textContent=FEED.length+' eventos';
+  // balanço
+  const corte=capCorte(SB.t)*fator(SB.t)*ctrlCorte()*60,cap=U.reduce((a,u,i)=>a+rateKnown(i,SB.t,SB.t),0)*60,dif=corte-cap;
+  const msg=dif>cap*0.06?`<div class="callout crit"><b>Corte acima da moagem em ${fmt(dif,0)} t/h.</b> As unidades vão encher. Mandar para longe não resolve: o certo é reduzir o ritmo de corte ou segurar caminhões na frente até abrir espaço.</div>`
+    :dif<-cap*0.06?`<div class="callout"><b>Corte abaixo da moagem em ${fmt(-dif,0)} t/h.</b> Risco de faltar cana. Priorize as unidades com menos voltas.</div>`
+    :`<div class="callout ok"><b>Corte e moagem equilibrados.</b> Diferença de ${fmt(dif,0)} t/h.</div>`;
+  $('#balanco').innerHTML=`<div class="grid g2" style="gap:10px;margin-bottom:12px"><div class="kpi"><div class="l">Corte previsto agora</div><div class="v">${fmt(corte,0)}</div><div class="s">t/h saindo das frentes</div></div><div class="kpi"><div class="l">Capacidade de moagem</div><div class="v">${fmt(cap,0)}</div><div class="s">t/h com as moendas paradas descontadas</div></div></div>${msg}`;
+  $('#lastDesp').innerHTML=`<tr><th>Hora</th><th>Frota</th><th>Motorista</th><th>Frente</th><th>Destino</th><th class="n">Carga</th><th class="n">Distância</th><th class="n">Fila prev.</th><th>Regra atual</th></tr>`+SB.log.slice(-12).reverse().map(e=>`<tr data-o="t:${e.v}"><td class="num">${hhmm(e.t)}</td><td><b>${e.id}</b></td><td>${e.mot.split(' ')[0]}</td><td>${F[e.f].id}</td><td><span class="sw" style="background:${ucol(e.u)}"></span>${U[e.u].nome}</td><td class="n">${fmt(e.carga,0)} t</td><td class="n">${fmt(e.d,0)} km</td><td class="n">${dur(e.W)}</td><td>${e.uA===e.u?'<span class="pill neu">igual</span>':`<span class="pill warn">${U[e.uA].nome}</span>`}</td></tr>`).join('');
+}
+
+/* mapa 2D */
+const MX={x0:-85,x1:30,y0:-30,y1:45},MW=600,MH=Math.round(600*(75/115));
+const mx=x=>(x-MX.x0)/(MX.x1-MX.x0)*MW,my=y=>MH-(y-MX.y0)/(MX.y1-MX.y0)*MH;
+function truckPos(k,t){let a,b,f;if(k.st==='ida'){a=F[k.f];b=U[k.u];f=(t-k.tSai)/(k.eta-k.tSai)}else if(k.st==='fila'){a=b=U[k.u];f=0}else{a=U[k.u];b=F[k.f];f=(t-k.tLib)/(k.tFim-k.tLib)}f=Math.max(0,Math.min(1,f));return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f}}
+function renderMap(){
+  const line=cssv('--line'),mute=cssv('--mute'),ink=cssv('--ink'),card=cssv('--card'),g2=cssv('--g3');
+  let s=`<svg viewBox="0 0 ${MW} ${MH}">`;
+  F.forEach((f,j)=>{s+=`<line x1="${mx(f.x)}" y1="${my(f.y)}" x2="${mx(JUNC[j].q.x)}" y2="${my(JUNC[j].q.y)}" stroke="#c9a77c" stroke-width="2" stroke-dasharray="4 3"/>`});
+  HW.forEach(([a,b])=>{s+=`<line x1="${mx(U[a].x)}" y1="${my(U[a].y)}" x2="${mx(U[b].x)}" y2="${my(U[b].y)}" stroke="${g2}" stroke-width="5" stroke-linecap="round"/>`});
+  F.forEach((f,j)=>{const L=loadingAt(SB,j),nv=SB.pool[j].length,x=mx(f.x),y=my(f.y);
+    s+=`<g data-o="f:${j}"><rect x="${x-24}" y="${y-30}" width="48" height="58" fill="transparent"/><rect x="${x-10}" y="${y-10}" width="20" height="20" rx="4" fill="#6f9a2e"/>
+      <text x="${x}" y="${y+4}" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">${nv}</text>
+      <rect x="${x-16}" y="${y-19}" width="32" height="5" rx="2.5" fill="${line}"/><rect x="${x-16}" y="${y-19}" width="${32*(L.vi!=null?L.fill:0)}" height="5" rx="2.5" fill="${cssv('--ok')}"/>
+      <text x="${x}" y="${y+23}" text-anchor="middle" font-size="10.5" fill="${mute}" font-weight="700">${f.id}</text></g>`});
+  for(const k of SB.tr){if(k.st==='fila')continue;const p=truckPos3(k,SB.t),c=ucol(k.u),x=mx(p.x),y=my(p.y);
+    s+=`<g data-o="t:${k.v}"><circle cx="${x}" cy="${y}" r="10" fill="transparent"/>${k.st==='ida'?`<circle cx="${x}" cy="${y}" r="4.5" fill="${c}" stroke="${card}" stroke-width="1.5"/>`:`<circle cx="${x}" cy="${y}" r="3.8" fill="${card}" stroke="${c}" stroke-width="2"/>`}</g>`}
+  U.forEach((u,i)=>{const v=SB.est[i]/u.tonV,stop=stopAt(i,SB.t),nf=SB.tr.filter(k=>k.u===i&&k.st==='fila').length;
+    s+=`<g data-o="u:${i}"><circle cx="${mx(u.x)}" cy="${my(u.y)}" r="17" fill="${ucol(i)}" stroke="${stop?cssv('--crit'):card}" stroke-width="${stop?4:3}"/><text x="${mx(u.x)}" y="${my(u.y)+4}" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">${fmt(v,1)}</text>
+      <text x="${mx(u.x)}" y="${my(u.y)-24}" text-anchor="middle" font-size="12" font-weight="800" fill="${ink}">${u.nome}</text>
+      <text x="${mx(u.x)}" y="${my(u.y)+32}" text-anchor="middle" font-size="10.5" fill="${stop?cssv('--crit'):mute}" font-weight="600">${stop?'MOENDA PARADA':nf+' na fila'}</text></g>`});
+  s+='</svg>';$('#map').innerHTML=s;
+}
+(function(){const m=$('#map');
+  m.addEventListener('pointerdown',e=>{const el=e.target.closest('[data-o]');if(el){const [t,id]=el.dataset.o.split(':');openFicha(t,+id)}});
+  m.addEventListener('mousemove',e=>{const el=e.target.closest('[data-o]');if(!el)return hideTip();const [t,id]=el.dataset.o.split(':');showTip(tipFor(t,+id),e.clientX,e.clientY)});
+  m.addEventListener('mouseleave',hideTip)})();
+function tipFor(t,n){
+  if(t==='u'){const u=U[n],v=SB.est[n]/u.tonV,stop=stopAt(n,SB.t);return`<b>${u.nome}</b><br>Estoque: <b>${fmt(v,1)} voltas</b> (${fmt(SB.est[n],0)} t)<br>Moagem: <b>${stop?'parada':fmt(u.tmin,1)+' t/min'}</b><br>Autonomia: <b>${dur(SB.est[n]/u.tmin)}</b><br><i>toque para a ficha</i>`}
+  if(t==='f'){const f=F[n],L=loadingAt(SB,n);return`<b>${f.id} · ${f.nome}</b><br>Ritmo: <b>${fmt(ritmoFrente(n,SB.t),0)} t/h</b> · ${f.colh.length} colhedoras<br>${L.vi!=null?`Carregando: <b>${FLEET[L.vi].frota}</b> ${fmt(L.fill*100,0)}%`:'Sem caminhão na frente'}<br>Vazios aguardando: <b>${Math.max(0,SB.pool[n].length-1)}</b><br><i>toque para a ficha</i>`}
+  const m=vmeta(SB,n),st=vehState(SB,n),k=st.k;return`<b>Frota ${m.frota}</b> · ${m.placa}<br>${k?k.mot:m.mot[turnoIdx(SB.t)]}<br>${ST_TXT[st.st][0]}${k?` · ${U[k.u].nome}`:''}${k&&k.st!=='volta'?`<br>Carga: <b>${fmt(k.carga,0)} t</b>`:''}<br><i>toque para a ficha</i>`}
+/* frota & frentes */
+function renderFrota(){
+  const own=FLEET.map((m,vi)=>({vi,m,s:vehState(SB,vi)}));const cnt=st=>own.filter(x=>x.s.st===st).length;
+  const K=[['Frota própria',FLEET.length,`${F.length} frentes de serviço`],['Carregando',cnt('carregando'),'um por frente'],['Carregado → usina',cnt('ida'),'na estrada'],['Na fila das usinas',cnt('fila'),'esperando descarregar'],['Voltando vazio',cnt('volta'),'para a frente'],['Aguardando na frente',cnt('aguardando'),`terceiros acionados desde o início: ${SB.terc}`]];
+  $('#frKpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
+  $('#frFrentes').innerHTML=F.map((f,j)=>{const L=loadingAt(SB,j),rt=ritmoFrente(j,SB.t),vol=SB.tr.filter(k=>k.f===j&&k.st==='volta').sort((a,b)=>a.tFim-b.tFim),sem=L.vi==null;const d=sem?null:destPrev(j);
+    return`<div class="card fcard" data-o="f:${j}"><div class="hd"><b>${f.id} · ${f.nome}</b><span class="pill ${sem?'warn':'ok'}">${sem?'! sem caminhão':'● colhendo'}</span></div>
+      <div class="chips">${f.colh.map(c=>`<span class="${sem?'warn':'ok'}">${c}</span>`).join('')}</div>
+      <div class="mini">Ritmo <b>${fmt(rt,0)} t/h</b> · ${fmt(rt/f.colh.length,0)} t/h por colhedora</div>
+      ${sem?`<div class="mini" style="color:var(--warn)">Colhedoras enchendo o transbordo, esperando caminhão. Próximo chega ${vol[0]?'às <b>'+hhmm(vol[0].tFim)+'</b>':'—'}.</div>`:
+      `<div class="mini" style="display:flex;justify-content:space-between"><span>Carregando <b>${FLEET[L.vi].frota}</b></span><span><b>${fmt(L.fill*100,0)}%</b> · enche em <b>${dur(L.end-SB.t)}</b></span></div><div class="prog sm" style="margin-top:4px"><div style="width:${L.fill*100}%"></div></div>
+       <div class="mini">Destino previsto: <b style="color:${ucol(d.i)}">${U[d.i].nome}</b></div>`}
+      <div class="mini">Vazios aguardando: <b>${Math.max(0,SB.pool[j].length-1)}</b> · Voltando: <b>${vol.length}</b>${vol[0]?` (próximo ${hhmm(vol[0].tFim)})`:''}</div></div>`}).join('');
+  const ff=$('#frF').value,fs=$('#frS').value,q=$('#frQ').value.trim().toUpperCase(),ti=turnoIdx(SB.t);
+  const rows=own.filter(x=>(ff===''||x.m.home==ff)&&(fs===''||x.s.st===fs)&&(!q||(x.m.frota+x.m.placa+x.m.mot.join(' ')).toUpperCase().includes(q)));
+  $('#frN').textContent=`${rows.length} de ${FLEET.length}`;
+  $('#frTab').innerHTML=`<tr><th>Frota</th><th>Placa</th><th>Modelo</th><th>Frente</th><th>Motorista agora</th><th>Situação</th><th>Destino</th><th class="n">Carga</th><th class="n">Previsão</th><th class="n">Viagens</th><th class="n">Transportado</th></tr>`+
+    rows.map(x=>{const k=x.s.k,st=ST_TXT[x.s.st];let carga='—',prev='—',dest='—';
+      if(x.s.st==='carregando'){const L=loadingAt(SB,x.s.j);carga=`${fmt(L.fill*100,0)}% de ~${fmt(L.carga,0)} t`;prev='enche '+hhmm(L.end)}
+      else if(x.s.st==='aguardando'){prev=`${x.s.q}º na fila`}
+      if(k){dest=`<span class="sw" style="background:${ucol(k.u)}"></span>${U[k.u].nome}`;if(k.st!=='volta')carga=fmt(k.carga,0)+' t';prev=k.st==='ida'?'chega '+hhmm(k.eta):k.st==='fila'?'libera '+hhmm(k.tLib):'na frente '+hhmm(k.tFim)}
+      return`<tr data-o="t:${x.vi}"><td><b>${x.m.frota}</b></td><td class="num">${x.m.placa}</td><td>${x.m.modelo}</td><td>${F[x.m.home].id}</td><td>${k?k.mot:x.m.mot[ti]}</td><td><span class="pill ${st[1]}">${st[0]}</span></td><td>${dest}</td><td class="n">${carga}</td><td class="n">${prev}</td><td class="n">${SB.veh[x.vi].trips}</td><td class="n">${fmt(SB.veh[x.vi].tons,0)} t</td></tr>`}).join('');
+}
+['#frF','#frS'].forEach(x=>$(x).onchange=()=>renderFrota());$('#frQ').oninput=()=>renderFrota();
+
+let FICHA=null;
+function openFicha(tipo,id){FICHA={tipo,id};hideTip();renderFicha();$('#drawer').classList.add('open')}
+function closeFicha(){FICHA=null;$('#drawer').classList.remove('open')}
+$('#drawerX').onclick=closeFicha;document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFicha()});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-o]');if(!el||el.closest('#map'))return;const [t,id]=el.dataset.o.split(':');openFicha(t,+id)});
+function rotaTab(j){return`<table><tr><th>Unidade</th><th class="n">Distância</th><th class="n">Ida carregado</th><th class="n">Diesel ida+volta</th></tr>${U.map((u,i)=>`<tr><td><span class="sw" style="background:${ucol(i)}"></span>${u.nome}</td><td class="n">${fmt(D[j][i],0)} km</td><td class="n">${dur(D[j][i]/P.velC*60)}</td><td class="n">${fmt(dieselL(D[j][i]),0)} L · ${brl(dieselL(D[j][i])*P.diesel)}</td></tr>`).join('')}</table>`}
+function fichaTruck(vi){const m=vmeta(SB,vi),V=SB.veh[vi],s=vehState(SB,vi),k=s.k,ti=turnoIdx(SB.t),st=ST_TXT[s.st],f=F[m.home];
+  let h=`<div class="fk">Frota ${m.terceiro?'terceira':'própria'} · ${m.modelo}</div><div class="ft">${m.frota}</div><div class="fs">Placa <b class="num">${m.placa}</b> · capacidade ${m.cap} t</div><div style="margin-top:8px"><span class="pill ${st[1]}">${st[0]}</span></div>`;
+  h+=`<div class="fh">Motorista</div><div style="font-size:17px;font-weight:700" data-o="m:${vi*3+(k?k.turno:ti)}">${k?k.mot:m.mot[ti]} ›</div><div class="fs">${turnoTxt(k?k.turno:ti)}</div>
+    <div class="chips" style="margin-top:8px">${m.mot.map((n,q)=>`<span class="${q===ti?'ok':''}" data-o="m:${vi*3+q}">${TURNOS[q].id}: ${n}</span>`).join('')}</div>`;
+  h+=`<div class="fh">Frente de serviço</div><div style="font-weight:700" data-o="f:${m.home}">${f.id} · ${f.nome} ›</div><div class="chips" style="margin-top:6px">${f.colh.map(c=>`<span>${c}</span>`).join('')}</div>`;
+  if(s.st==='carregando'){const L=loadingAt(SB,s.j),d=destPrev(s.j);
+    h+=`<div class="fh">Carregando agora</div><div class="prog"><div style="width:${L.fill*100}%"></div></div>
+      <div class="kv mt"><div>Cheio<b>${fmt(L.fill*100,0)}%</b></div><div>Já tem<b>~${fmt(L.carga*L.fill,0)} t</b></div><div>Carga prevista<b>~${fmt(L.carga,0)} t</b></div><div>Enche em<b>${dur(L.end-SB.t)}</b> </div></div>
+      <div class="callout ok mt">Destino recomendado agora: <b style="color:${ucol(d.i)}">${U[d.i].nome}</b>. ${fmt(d.d,0)} km, ${dur(d.tIda)} de viagem, ~${fmt(dieselL(d.d),0)} L de diesel ida e volta.</div>`}
+  else if(s.st==='aguardando'){h+=`<div class="fh">Na frente</div><div class="kv"><div>Posição na fila de vazios<b>${s.q}º</b></div><div>Chegou às<b>${hhmm(V.tCheg)}</b></div></div>`}
+  else if(k){const dl=dieselL(k.d);
+    h+=`<div class="fh">Viagem atual</div><div class="kv"><div>Destino<b style="color:${ucol(k.u)}">${U[k.u].nome}</b></div><div>Carga<b>${fmt(k.carga,0)} t</b></div><div>Saiu da frente<b>${hhmm(k.tSai)}</b></div>
+      <div>${k.st==='ida'?'Chega na usina':k.st==='fila'?'Libera da fila':'Chega na frente'}<b>${hhmm(k.st==='ida'?k.eta:k.st==='fila'?k.tLib:k.tFim)}</b></div><div>Distância<b>${fmt(k.d,0)} km</b></div><div>Tempo de ida<b>${dur(k.d/P.velC*60)}</b></div>
+      <div>Diesel ida+volta<b>${fmt(dl,0)} L</b></div><div>Custo diesel<b>${brl(dl*P.diesel)}</b></div>${k.W!=null?`<div>Fila na usina<b>${dur(k.W)}</b></div>`:''}</div>`;
+    if(k.st==='ida'){const p=(SB.t-k.tSai)/(k.eta-k.tSai);h+=`<div class="prog sm mt"><div style="width:${p*100}%;background:${ucol(k.u)}"></div></div><div class="fs" style="margin-top:4px">${fmt(p*100,0)}% do caminho</div>`}}
+  h+=`<div class="fh">Na simulação</div><div class="kv"><div>Viagens<b>${V.trips}</b></div><div>Transportado<b>${fmt(V.tons,0)} t</b></div><div>Rodado<b>${fmt(V.km,0)} km</b></div><div>Diesel<b>${fmt(V.lit||0,0)} L</b></div></div>`;
+  return h}
+function fichaFrente(j){const f=F[j],L=loadingAt(SB,j),rt=ritmoFrente(j,SB.t),d0=Math.floor(SB.t/1440)*1440,hoje=SB.log.filter(e=>e.f===j&&e.t>=d0),sem=L.vi==null;
+  const vol=SB.tr.filter(k=>k.f===j&&k.st==='volta').sort((a,b)=>a.tFim-b.tFim),ida=SB.tr.filter(k=>k.f===j&&(k.st==='ida'||k.st==='fila'));
+  let h=`<div class="fk">Frente de serviço</div><div class="ft">${f.id}</div><div class="fs">${f.nome} · frota própria de ${f.nFrota} caminhões</div><div style="margin-top:8px"><span class="pill ${sem?'warn':'ok'}">${sem?'! colhedoras sem caminhão':'● colhendo'}</span></div>`;
+  h+=`<div class="fh">Colhedoras</div><div class="chips">${f.colh.map(c=>`<span class="${sem?'warn':'ok'}">${c} · ${fmt(rt/f.colh.length,0)} t/h</span>`).join('')}</div>
+    <div class="kv mt"><div>Ritmo da frente<b>${fmt(rt,0)} t/h</b></div><div>Colhido hoje<b>${fmt(hoje.reduce((a,e)=>a+e.carga,0),0)} t</b></div><div>Cargas hoje<b>${hoje.length}</b></div><div>Uma carga a cada<b>${dur(P.cargaMed/rt*60)}</b></div></div>`;
+  if(!sem){const m=FLEET[L.vi],d=destPrev(j);h+=`<div class="fh">Carregando agora</div><div data-o="t:${L.vi}" style="font-weight:700">Frota ${m.frota} · ${m.mot[turnoIdx(SB.t)]} ›</div><div class="prog mt"><div style="width:${L.fill*100}%"></div></div>
+    <div class="kv mt"><div>Cheio<b>${fmt(L.fill*100,0)}%</b></div><div>Enche em<b>${dur(L.end-SB.t)}</b></div><div>Carga prevista<b>~${fmt(L.carga,0)} t</b></div><div>Destino previsto<b style="color:${ucol(d.i)}">${U[d.i].nome}</b></div></div>`}
+  h+=`<div class="fh">Vazios aguardando (${Math.max(0,SB.pool[j].length-1)})</div><div class="chips">${SB.pool[j].slice(1).map(vi=>`<span data-o="t:${vi}">${FLEET[vi].frota}</span>`).join('')||'<span>nenhum</span>'}</div>`;
+  h+=`<div class="fh">Voltando para cá (${vol.length})</div>${vol.slice(0,8).map(k=>`<div class="lrow" style="grid-template-columns:60px 1fr 60px" data-o="t:${k.v}"><b>${k.id}</b><span>${k.mot}</span><span class="num">${hhmm(k.tFim)}</span></div>`).join('')||'<p class="hint">nenhum</p>'}`;
+  h+=`<div class="fh">Carregados a caminho das usinas (${ida.length})</div>${ida.slice(0,8).map(k=>`<div class="lrow" style="grid-template-columns:60px 1fr 90px" data-o="t:${k.v}"><b>${k.id}</b><span>${U[k.u].nome}</span><span class="num">${k.st==='ida'?'chega '+hhmm(k.eta):'na fila'}</span></div>`).join('')||'<p class="hint">nenhum</p>'}`;
+  h+=`<div class="fh">Distância, tempo e diesel até cada unidade</div>${rotaTab(j)}<p><button class="btn y mt" onclick="$('#rF').value='${j}';closeFicha();go('rotas')">Abrir na calculadora de rota</button></p>`;return h}
+function fichaUnit(i){const u=U[i],v=SB.est[i]/u.tonV,st=statusUnit(i),stop=stopAt(i,SB.t),fila=SB.tr.filter(k=>k.u===i&&k.st==='fila').sort((a,b)=>a.tLib-b.tLib),ida=SB.tr.filter(k=>k.u===i&&k.st==='ida').sort((a,b)=>a.eta-b.eta);
+  let h=`<div class="fk">Unidade</div><div class="ft" style="color:${ucol(i)}">${u.nome}</div><div style="margin-top:8px"><span class="pill ${st.c}">${st.t}</span></div>
+    <div class="kv mt"><div>Estoque<b>${fmt(v,1)} voltas</b></div><div>Toneladas<b>${fmt(SB.est[i],0)} t</b></div><div>Moagem<b>${stop?'0,0':fmt(u.tmin,1)} t/min</b></div><div>Autonomia<b>${dur(SB.est[i]/u.tmin)}</b></div></div>${stop?`<div class="callout crit mt">${stop.tipo}. Volta prevista às ${hhmm(stop.fim)}.</div>`:''}`;
+  h+=`<div class="fh">Na fila (${fila.length})</div>${fila.map(k=>`<div class="lrow" style="grid-template-columns:60px 1fr 80px" data-o="t:${k.v}"><b>${k.id}</b><span>${k.mot} · ${F[k.f].id}</span><span class="num">libera ${hhmm(k.tLib)}</span></div>`).join('')||'<p class="hint">ninguém na fila</p>'}`;
+  h+=`<div class="fh">A caminho (${ida.length} · ${fmt(ida.reduce((a,k)=>a+k.carga,0),0)} t)</div>${ida.map(k=>`<div class="lrow" style="grid-template-columns:60px 1fr 80px" data-o="t:${k.v}"><b>${k.id}</b><span>${F[k.f].id} · ${fmt(k.carga,0)} t</span><span class="num">chega ${hhmm(k.eta)}</span></div>`).join('')||'<p class="hint">nenhum</p>'}`;return h}
+function renderFicha(){if(!FICHA)return;const b=$('#drawerBody'),sc=$('#drawer').scrollTop;b.innerHTML=FICHA.tipo==='m'?fichaMot(FICHA.id):FICHA.tipo==='t'?fichaTruck(FICHA.id):FICHA.tipo==='f'?fichaFrente(FICHA.id):fichaUnit(FICHA.id);$('#drawer').scrollTop=sc}
+
+/* ============ sugestões ============ */
+// projeção do estoque com mudanças hipotéticas (caminhão a mais, a menos, cana retirada da fila)
+function projectMod(sim,i,t0,t1,mod){mod=mod||{};let S=Math.max(0,sim.est[i]+(mod.dS||0)),idle=0;const h=5,ex=exFor(sim,i,t0);
+  const arr=sim.tr.filter(k=>k.u===i&&k.st==='ida'&&!(mod.skip&&mod.skip.has(k))).map(k=>[k.eta,k.carga]).concat(mod.add||[]);
+  for(let tau=t0;tau<t1-1e-9;tau+=h){const hh=Math.min(h,t1-tau);for(const a of arr)if(a[0]>=tau&&a[0]<tau+hh)S+=a[1];S+=ex(tau)*hh;const r=rateKnown(i,tau,t0),m=r*hh;if(S>=m)S-=m;else{if(r>0)idle+=(m-S)/r;S=0}}
+  return{S,idle}}
+function Wat(sim,i,eta,mod){const t=sim.t,u=U[i],Sp=projectMod(sim,i,t,eta,mod).S,st=knownStop(i,eta,t);return Math.max(0,Sp-u.hiloV*u.tonV)/u.tmin+(st?st.fim-eta:0)}
+const legKm=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y)*1.3+1;
+// quanto custa / quanto ganha mudar o destino de um caminhão (na estrada ou na fila) para a unidade i
+function avalMover(k,i,addI){const t=SB.t,j=k.u,f=k.f,H=t+180;let from,leg,rem=0,waitSave,dS=0,skip=null;
+  let Wj=0;if(k.st==='ida'){from=truckPos3(k,t);leg=legKm(from,U[i]);rem=Math.max(0,(k.eta-t)/60*P.velC);skip=new Set([k]);Wj=Wat(SB,j,k.eta,{});waitSave=(k.eta-t)+Wj;}
+  else{from={x:U[j].x,y:U[j].y};leg=dist(U[j],U[i]);waitSave=Math.max(0,k.tLib-t);dS=-k.carga}
+  const tArr=t+leg/P.velC*60,Wi=Wat(SB,i,tArr,{add:addI}),dKmC=leg-rem,dKmV=D[f][i]-D[f][j];
+  const dL=dKmC/P.kmLc+dKmV/P.kmLv,tNovo=leg/P.velC*60+Wi,dT=tNovo-waitSave+dKmV/P.velV*60;
+  const custo=dL*P.diesel+dT/60*P.hora+k.carga*P.perdaATR*Math.max(0,tNovo-waitSave)/60*P.precoATR;
+  const i0=projectMod(SB,i,t,H,{add:addI}).idle,i1=projectMod(SB,i,t,H,{add:[...(addI||[]),[tArr,k.carga]]}).idle;
+  const j0=projectMod(SB,j,t,H,{}).idle,j1=projectMod(SB,j,t,H,{skip,dS}).idle;
+  const evit=Math.max(0,i0-i1),cria=Math.max(0,j1-j0);
+  const dieselC=dL*P.diesel,tempoC=dT/60*P.hora,atrC=custo-dieselC-tempoC;
+  return{k,i,j,from,leg,rem,Wj,tArr,Wi,waitSave,tNovo,dL,dT,dKmC,dKmV,custo,dieselC,tempoC,atrC,evit,cria,i0,j0,ganho:(evit-cria)*P.parada-custo}}
+const nm=i=>U[i].nome.replace(' do Oeste','');
+const sinal=v=>(v>=0?'+':'−')+fmt(Math.abs(v),0);
+function contaMover(c,fim){const k=c.k,t=SB.t,ui=U[c.i],uj=U[c.j],L=[],stJ=stopAt(c.j,t),stJk=k.st==='ida'?knownStop(c.j,k.eta,t):stJ;
+  // ficando
+  if(k.st==='fila')L.push(`<b>Se ficar</b> na fila de ${nm(c.j)}: ${stJ?`a moenda está parada até ${hhmm(stJ.fim)} e depois `:''}ainda tem cana na frente dele. Descarrega às <b>${hhmm(k.tLib)}</b>, daqui a <b>${dur(c.waitSave)}</b>.`);
+  else L.push(`<b>Se seguir</b> para ${nm(c.j)}: chega às ${hhmm(k.eta)} (faltam ${fmt(c.rem,0)} km)${stJk?`, mas a moenda de lá está parada até ${hhmm(stJk.fim)}`:''}. Fila prevista na chegada: ${dur(c.Wj)}. Descarrega em <b>${dur(c.waitSave)}</b>.`);
+  // indo
+  L.push(`<b>Se for para ${nm(c.i)}</b>: ${fmt(c.leg,0)} km ÷ ${P.velC} km/h = ${dur(c.leg/P.velC*60)} de viagem. Chega às ${hhmm(c.tArr)}${c.Wi>0.5?` e pega ${dur(c.Wi)} de fila`:', sem fila'}. Descarrega em <b>${dur(c.tNovo)}</b>.`);
+  const dif=c.waitSave-c.tNovo;
+  L.push(`<b>Diferença de tempo</b>: ${dur(c.waitSave)} − ${dur(c.tNovo)} = <b>${dif>=0?dur(dif)+' a favor de ir':dur(-dif)+' a favor de ficar'}</b>${Math.abs(c.dKmV)>0.5?`; a volta vazia até ${F[k.f].id} muda ${sinal(c.dKmV)} km (${sinal(c.dKmV/P.velV*60)} min)`:''}. ${c.dT>=0?`No total o caminhão fica <b>${dur(c.dT)} a mais</b> rodando/parado × R$ ${fmt(P.hora,0)}/h = <b>${brl(c.tempoC)}</b> de custo.`:`No total o caminhão fica <b>${dur(-c.dT)} a menos</b> rodando/parado × R$ ${fmt(P.hora,0)}/h = <b>${brl(-c.tempoC)} economizados</b>.`}`);
+  L.push(`<b>Diesel</b>: ${sinal(c.dKmC)} km carregado ÷ ${fmt(P.kmLc,2)} km/L ${c.dKmV>=0?'+':'−'} ${fmt(Math.abs(c.dKmV),0)} km vazio ÷ ${fmt(P.kmLv,2)} km/L = <b>${sinal(c.dL)} L</b> × R$ ${fmt(P.diesel,2)} = <b>${c.dieselC>=0?'':'−'}${brl(Math.abs(c.dieselC))}</b>.${Math.abs(c.atrC)>=1?` Cana parada no caminhão (ATR): ${c.atrC>=0?'':'−'}${brl(Math.abs(c.atrC))}.`:''}`);
+  if(c.evit>0.5){const mm=k.carga/ui.tmin;L.push(`<b>Falta de cana evitada</b>: ${fmt(k.carga,0)} t ÷ ${fmt(ui.tmin,1)} t/min (consumo da moenda de ${nm(c.i)}) = ${fmt(mm,1)} min de moagem. Chegando às ${hhmm(c.tArr)}, evita <b>${dur(c.evit)}</b> de moenda parada × R$ ${fmt(P.parada,0)}/min = <b>${brl(c.evit*P.parada)}</b>.`)}
+  if(c.cria>0.5)L.push(`<b>Atenção</b>: tirando essa cana de ${nm(c.j)}, a moenda de lá fica ${dur(c.cria)} sem cana nas próximas 3h (−${brl(c.cria*P.parada)}).`);
+  const g=c.ganho;L.push(`<span class="res ${g>0?'ok':'no'}">${g>0?'✓ Compensa':'✗ Não compensa'}: ${c.evit>0.5?`${brl(c.evit*P.parada)} evitados `:''}${c.cria>0.5?`− ${brl(c.cria*P.parada)} `:''}${c.custo>=0?`− ${brl(c.custo)} de custo`:`+ ${brl(-c.custo)} economizados no caminho`} = <b>${g>=0?'ganho de '+brl(g):'perda de '+brl(-g)}</b>.${fim?' '+fim:''}</span>`);
+  return L}
+function contaFalta(i,idle0,pv){const u=U[i],t=SB.t,e=SB.est[i],ins=SB.tr.filter(k=>k.u===i&&k.st==='ida').sort((a,b)=>a.eta-b.eta),insT=ins.reduce((a,k)=>a+k.carga,0),L=[];
+  L.push(e<1?`<b>Estoque agora</b>: zerado. A moenda de ${u.nome} já está sem cana.`:`<b>Estoque agora</b>: ${fmt(e,0)} t (${fmt(e/u.tonV,1)} voltas). A moenda consome <b>${fmt(u.tmin,1)} t/min</b> → ${fmt(e,0)} ÷ ${fmt(u.tmin,1)} = <b>${dur(e/u.tmin)}</b> de cana, até ${hhmm(t+e/u.tmin)}.`);
+  L.push(ins.length?`<b>A caminho</b>: ${ins.length} caminh${ins.length>1?'ões':'ão'} com ${fmt(insT,0)} t. Próximos: ${ins.slice(0,3).map(k=>`${k.id} às ${hhmm(k.eta)} (${fmt(k.carga,0)} t)`).join(', ')}. Cada carga dá uns ${fmt(P.cargaMed/u.tmin,0)} min de moagem.`:'<b>A caminho</b>: nenhum caminhão vindo agora.');
+  L.push(`<b>Depois deles</b>: costuma chegar ${fmt(pv.rin*60,0)} t/h, contra ${fmt(u.tmin*60,0)} t/h de consumo. ${pv.rin<u.tmin?`Falta ${fmt((u.tmin-pv.rin)*60,0)} t/h para acompanhar a moenda.`:'A chegada acompanha, mas não a tempo.'}`);
+  L.push(`<b>Resultado da previsão</b>: a cana acaba às ${hhmm(t+pv.seca)} e a moenda fica cerca de <b>${dur(idle0)}</b> parada nas próximas 3 horas × R$ ${fmt(P.parada,0)}/min = <b>${brl(idle0*P.parada)}</b> se ninguém fizer nada.`);return L}
+function contaParada(i,st,esp){const u=U[i],t=SB.t,fila=esp.filter(k=>k.st==='fila'),ida=esp.filter(k=>k.st==='ida'),tf=fila.reduce((a,k)=>a+k.carga,0),L=[];
+  L.push(`<b>Moenda parada</b>: ${st.tipo}. Volta às <b>${hhmm(st.fim)}</b> (daqui a ${dur(st.fim-t)}).`);
+  L.push(`<b>Esperando</b>: ${fila.length} na fila com ${fmt(tf,0)} t${ida.length?` e mais ${ida.length} chegando antes da moenda voltar`:''}. Estoque no pátio: ${fmt(SB.est[i],0)} t (${fmt(SB.est[i]/u.tonV,1)} voltas).`);
+  L.push(`<b>Quando voltar</b>: consome ${fmt(u.tmin,1)} t/min. Até ${fmt(u.hiloV,1)} voltas (${fmt(u.hiloV*u.tonV,0)} t) a cana descarrega direto no pátio; acima disso o caminhão espera. Excesso agora: ${fmt(Math.max(0,SB.est[i]-u.hiloV*u.tonV),0)} t ÷ ${fmt(u.tmin,1)} = ${dur(Math.max(0,SB.est[i]-u.hiloV*u.tonV)/u.tmin)} de fila depois que voltar.`);
+  L.push(`<b>Regra</b>: compensa sair só quando o tempo economizado (× R$ ${fmt(P.hora,0)}/h) mais a falta de cana evitada em outra unidade pagam o diesel e a viagem extra, com folga de ${brl(P.limiar)}.`);return L}
+function contaFrente(j,t0,back,nc,idle0){const f=F[j],t=SB.t,rt=ritmoFrente(j,t);return[
+  `<b>Colheita</b>: ${nc} colhedoras, ${fmt(rt,0)} t/h no total (${fmt(rt/nc,0)} t/h cada).`,
+  `<b>Sem caminhão</b>: o transbordo enche às ${hhmm(t0)}. ${back<Infinity?`O próximo caminhão próprio volta às ${hhmm(back)}.`:'Nenhum caminhão próprio está voltando.'}`,
+  `<b>Sem fazer nada</b>: ${dur(idle0)} com ${nc} colhedoras paradas × R$ ${fmt(P.colh,0)}/min cada = <b>${brl(idle0*nc*P.colh)}</b>.`]}
+function contaRemanejo(c,j,t0,fim,nc,idle0){const t=SB.t,idle1=Math.max(0,Math.min(fim,t+c.tt)-t0);return[
+  `<b>Caminhão sobrando</b>: frota ${FLEET[c.vi].frota} está parada em ${F[c.q].id}, que tem ${SB.pool[c.q].length} vazios esperando (fica com ${SB.pool[c.q].length-1}).`,
+  `<b>Viagem vazia</b>: ${fmt(c.d,0)} km ÷ ${P.velV} km/h = ${dur(c.tt)} → chega às ${hhmm(t+c.tt)}. Colhedoras paradas: de ${dur(idle0)} cai para <b>${dur(idle1)}</b>.`,
+  `<b>Custo</b>: ${fmt(c.d,0)} km ÷ ${fmt(P.kmLv,2)} km/L = ${fmt(c.L,0)} L × R$ ${fmt(P.diesel,2)} = ${brl(c.L*P.diesel)} + ${dur(c.tt)} de caminhão = ${brl(c.tt/60*P.hora)} → total <b>${brl(c.custo)}</b>.`,
+  `<span class="res ok">✓ Compensa: ${dur(idle0-idle1)} × ${nc} colhedoras × R$ ${fmt(P.colh,0)} = ${brl((idle0-idle1)*nc*P.colh)} − ${brl(c.custo)} = <b>ganho de ${brl(c.ganho)}</b>.</span>`]}
+function aplicarMover(c){const k=c.k,t=SB.t;if(!SB.tr.includes(k)||(k.st!=='ida'&&k.st!=='fila'))return false;
+  if(k.st==='fila'){SB.est[k.u]=Math.max(0,SB.est[k.u]-k.carga);k.st='ida'}
+  k.leg={from:c.from,to:{x:U[c.i].x,y:U[c.i].y},t0:t,t1:c.tArr,st:'ida'};k.u=c.i;k.eta=c.tArr;k.d=D[k.f][c.i];k.W=null;
+  SB.k.diesel+=c.dL*P.diesel;SB.k.km+=c.leg;return true}
+function sitTxt(k){return k.st==='ida'?`na estrada para ${U[k.u].nome.replace(' do Oeste','')}`:`na fila de ${U[k.u].nome.replace(' do Oeste','')}`}
+let SUG=[],SUGt=-1,APLIC=[];const OPENEX=new Set();
+function gerarSug(){
+  if(SUGt===SB.t&&SUG)return SUG;SUGt=SB.t;const t=SB.t,out=[],usados=new Set();
+  // 1) unidade vai ficar sem cana: quem pode socorrer
+  U.forEach((u,i)=>{if(stopAt(i,t))return;const pv=previsao(i,180);if(pv.seca==null||pv.seca>150)return;
+    const idle0=projectMod(SB,i,t,t+180).idle;if(idle0<2)return;
+    const cands=SB.tr.filter(k=>k.u!==i&&(k.st==='ida'||k.st==='fila')).map(k=>avalMover(k,i,[])).filter(c=>c.evit>0.5&&c.ganho>0).sort((a,b)=>b.ganho-a.ganho).slice(0,8);
+    F.forEach((f,j)=>{const L=loadingAt(SB,j);if(L.vi==null||L.fill<0.5)return;const tArr=L.end+D[j][i]/P.velC*60,i1=projectMod(SB,i,t,t+180,{add:[[tArr,L.carga]]}).idle,av=avaliar(SB,j,L.carga,t),b=escolher(av,j);if(b.i===i)return;
+      const extra=(av[i].total+av[i].bonus)-(b.total+b.bonus),evit=Math.max(0,idle0-i1);if(evit<0.5)return;
+      cands.push({load:true,j,vi:L.vi,i,tArr,evit,custo:extra,ganho:evit*P.parada-extra,dL:dieselL(D[j][i])-dieselL(D[j][b.i]),def:b.i})});
+    cands.sort((a,b)=>b.ganho-a.ganho);
+    // plano guloso: vai somando quem mais ajuda até não compensar mais
+    const plano=[],add=[];let restante=idle0;
+    for(const c0 of cands){if(plano.length>=4)break;const c=c0.load?c0:avalMover(c0.k,i,add);const i1=projectMod(SB,i,t,t+180,{add:[...add,[c.tArr,c.load?SB.tr&&loadingAt(SB,c.j).carga:c.k.carga]]}).idle,ev=Math.max(0,restante-i1),g=c.load?ev*P.parada-c.custo:(ev-c.cria)*P.parada-c.custo;
+      if(g<=50)continue;plano.push({...c,evit:ev,ganho:g});add.push([c.tArr,c.load?loadingAt(SB,c.j).carga:c.k.carga]);restante=i1}
+    const gain=plano.reduce((a,c)=>a+c.ganho,0),custo=plano.reduce((a,c)=>a+c.custo,0);plano.forEach(c=>c.k&&usados.add(c.k));
+    out.push({key:'falta'+i,conta:contaFalta(i,idle0,pv),sev:pv.seca<45?'crit':'warn',ic:'!',titulo:pv.seca<1?`${u.nome} está sem cana agora`:`${u.nome} vai ficar sem cana às ${hhmm(t+pv.seca)} (em ${dur(pv.seca)})`,
+      texto:plano.length?`Sem ação, a moenda fica parada cerca de ${dur(idle0)} nas próximas 3 horas. Dá para socorrer com ${plano.length} caminh${plano.length>1?'ões':'ão'}:`:`Ninguém consegue chegar a tempo com ganho. Avise a indústria para reduzir a moagem de ${u.nome} e acelere o corte nas frentes mais perto.`,
+      naoFazer:idle0*P.parada,fazer:idle0*P.parada-gain,ganho:gain,
+      itens:plano.map(c=>c.load?{conta:[`<b>Situação</b>: frota ${FLEET[c.vi].frota} está ${fmt(loadingAt(SB,c.j).fill*100,0)}% cheia em ${F[c.j].id} e enche às ${hhmm(loadingAt(SB,c.j).end)}. Pelo custo normal iria para ${nm(c.def)}.`,`<b>Para ${nm(i)}</b>: ${fmt(D[c.j][i],0)} km ÷ ${P.velC} km/h = ${dur(D[c.j][i]/P.velC*60)} → chega às ${hhmm(c.tArr)}. Diesel ${sinal(c.dL)} L em relação a ${nm(c.def)}.`,`<b>Custo extra</b> de não ir para ${nm(c.def)} (diesel, viagem e fila): <b>${brl(Math.max(0,c.custo))}</b>.`,`<b>Falta evitada</b>: ${fmt(loadingAt(SB,c.j).carga,0)} t ÷ ${fmt(U[i].tmin,1)} t/min = ${fmt(loadingAt(SB,c.j).carga/U[i].tmin,1)} min de moagem → evita <b>${dur(c.evit)}</b> parada = ${brl(c.evit*P.parada)}.`,`<span class="res ok">✓ Compensa: ${brl(c.evit*P.parada)} − ${brl(Math.max(0,c.custo))} = <b>ganho de ${brl(c.ganho)}</b>.</span>`],titulo:`Frota ${FLEET[c.vi].frota} · carregando em ${F[c.j].id}`,det:`mandar para ${u.nome} em vez de ${U[c.def].nome} · chega ${hhmm(c.tArr)} · evita ${dur(c.evit)} de moenda parada · custo extra ${brl(c.custo)}`,ganho:c.ganho,act:()=>{SB.force[c.j]=i;return true},vi:c.vi}
+        :{conta:contaMover(c),titulo:`Frota ${c.k.id} · ${sitTxt(c.k)}`,det:`desviar para ${u.nome} · chega ${hhmm(c.tArr)} (${fmt(c.leg,0)} km) · ${c.dL>=0?'+':''}${fmt(c.dL,0)} L diesel · evita ${dur(c.evit)} parada${c.cria>0.5?` · causa ${dur(c.cria)} em ${U[c.j].nome}`:''}`,ganho:c.ganho,act:()=>aplicarMover(c),vi:c.k.v}),
+      acao:plano.length?`Aplicar socorro (${plano.length})`:null});
+  });
+  // 2) moenda parada com caminhões esperando: compensa sair?
+  U.forEach((u,i)=>{const st=stopAt(i,t);if(!st)return;const esp=SB.tr.filter(k=>k.u===i&&!usados.has(k)&&(k.st==='fila'||(k.st==='ida'&&k.eta<st.fim))).sort((a,b)=>(b.tLib||b.eta)-(a.tLib||a.eta));if(!esp.length)return;
+    const plano=[],adds=U.map(()=>[]);let melhorPerda=null;
+    for(const k of esp){let best=null;U.forEach((v,jj)=>{if(jj===i||stopAt(jj,t))return;const c=avalMover(k,jj,adds[jj]);if(!best||c.ganho>best.ganho)best=c});
+      if(!best)continue;if(best.ganho>P.limiar){plano.push(best);adds[best.i].push([best.tArr,k.carga])}else if(melhorPerda==null||best.ganho>melhorPerda.ganho)melhorPerda=best}
+    plano.forEach(c=>usados.add(c.k));const gain=plano.reduce((a,c)=>a+c.ganho,0),espera=plano.reduce((a,c)=>a+c.waitSave,0);
+    out.push({key:'parada'+i,conta:contaParada(i,st,esp),extra:!plano.length&&melhorPerda?{titulo:`Por que não tirar ninguém? Melhor caso: frota ${melhorPerda.k.id} para ${nm(melhorPerda.i)}`,conta:contaMover(melhorPerda,'Por isso o certo é esperar a moenda voltar.')}:null,sev:plano.length?'warn':'info',ic:'⏸',titulo:`Moenda de ${u.nome} parada até ${hhmm(st.fim)} · ${esp.length} caminh${esp.length>1?'ões':'ão'} esperando`,
+      texto:plano.length?`Compensa tirar ${plano.length} caminh${plano.length>1?'ões':'ão'} (os que esperariam mais). ${esp.length-plano.length?`Os outros ${esp.length-plano.length} devem esperar: sair custaria mais do que a espera.`:''}`
+        :`Compensa esperar. A moenda volta em ${dur(st.fim-t)}.${melhorPerda?` Levar o melhor caso para ${U[melhorPerda.i].nome} custaria ${brl(-melhorPerda.ganho)} a mais por caminhão.`:''}`,
+      naoFazer:plano.reduce((a,c)=>a+c.evit*P.parada+c.waitSave/60*P.hora,0),fazer:plano.reduce((a,c)=>a+c.evit*P.parada+c.waitSave/60*P.hora,0)-gain,ganho:gain,
+      itens:plano.map(c=>({conta:contaMover(c),titulo:`Frota ${c.k.id} · ${sitTxt(c.k)}`,det:`ficando, descarrega em ${dur(c.waitSave)} · indo para ${U[c.i].nome}: ${fmt(c.leg,0)} km, descarrega em ${dur(c.tNovo)}, ${c.dL>=0?'+':''}${fmt(c.dL,0)} L diesel${c.evit>0.5?` · evita ${dur(c.evit)} sem cana em ${U[c.i].nome.replace(' do Oeste','')}`:''}`,ganho:c.ganho,act:()=>aplicarMover(c),vi:c.k.v})),
+      acao:plano.length?`Mandar os ${plano.length}`:null});
+  });
+  // 3) caminhões na estrada com destino que piorou
+  const rot=[];SB.tr.filter(k=>k.st==='ida'&&!usados.has(k)&&!k.leg).forEach(k=>{let best=null;U.forEach((v,i)=>{if(i===k.u)return;const c=avalMover(k,i,[]);if(!best||c.ganho>best.ganho)best=c});if(best&&best.ganho>Math.max(250,P.limiar*1.5))rot.push(best)});
+  rot.sort((a,b)=>b.ganho-a.ganho);
+  if(rot.length){const top=rot.slice(0,5),gain=top.reduce((a,c)=>a+c.ganho,0);
+    out.push({key:'rota',sev:'warn',ic:'↻',titulo:`${rot.length} caminh${rot.length>1?'ões estão indo':'ão está indo'} para o lugar errado agora`,texto:'O destino piorou depois que o caminhão saiu (fila cresceu, moenda parou ou outra unidade precisa mais). Desviar na estrada sai mais barato:',
+      naoFazer:top.reduce((a,c)=>a+c.evit*P.parada+c.waitSave/60*P.hora,0),fazer:top.reduce((a,c)=>a+c.evit*P.parada+c.waitSave/60*P.hora,0)-gain,ganho:gain,
+      itens:top.map(c=>({conta:contaMover(c),titulo:`Frota ${c.k.id} · ${F[c.k.f].id} → ${U[c.k.u].nome}`,det:`desviar para ${U[c.i].nome} · chegaria ${hhmm(c.k.eta)} e esperaria ${dur(c.waitSave-(c.k.eta-t))} · novo: chega ${hhmm(c.tArr)}, fila ${dur(c.Wi)} · ${c.dL>=0?'+':''}${fmt(c.dL,0)} L`,ganho:c.ganho,act:()=>aplicarMover(c),vi:c.k.v})),acao:`Desviar ${top.length}`})}
+  // 4) frente sem caminhão: remanejar vazio de outra frente
+  F.forEach((f,j)=>{if(SB.pool[j].length)return;const t0=nextF[j],back=SB.tr.filter(k=>k.f===j&&k.st==='volta').reduce((m,k)=>Math.min(m,k.tFim),Infinity),nc=f.colh.length;
+    const fim=Math.min(back,t0+90),idle0=Math.max(0,fim-t0);if(idle0<5)return;const doad=[];
+    F.forEach((g,q)=>{if(q===j||SB.pool[q].length<3)return;const d=dist(g,f),tt=d/P.velV*60,idle1=Math.max(0,Math.min(fim,t+tt)-t0),L=d/P.kmLv,custo=L*P.diesel+tt/60*P.hora,ganho=(idle0-idle1)*nc*P.colh-custo;if(ganho>0)doad.push({q,d,tt,L,custo,ganho,vi:SB.pool[q][SB.pool[q].length-1]})});
+    doad.sort((a,b)=>b.ganho-a.ganho);const c=doad[0];
+    out.push({key:'frente'+j,conta:contaFrente(j,t0,back,nc,idle0),sev:c?'warn':'info',ic:'⛟',titulo:`${f.id} · ${f.nome} sem caminhão`,
+      texto:`As ${nc} colhedoras enchem o transbordo às ${hhmm(t0)} e param${back<Infinity?` até o próximo caminhão voltar (${hhmm(back)})`:''}. ${c?`Tem caminhão vazio sobrando em ${F[c.q].id}:`:'Nenhuma frente tem caminhão sobrando perto. Vai precisar de terceiro.'}`,
+      naoFazer:idle0*nc*P.colh,fazer:c?idle0*nc*P.colh-c.ganho:idle0*nc*P.colh,ganho:c?c.ganho:0,
+      itens:c?[{conta:contaRemanejo(c,j,t0,fim,nc,idle0),titulo:`Frota ${FLEET[c.vi].frota} · aguardando em ${F[c.q].id}`,det:`${fmt(c.d,0)} km vazio · chega ${hhmm(t+c.tt)} · ${fmt(c.L,0)} L diesel · custo ${brl(c.custo)}`,ganho:c.ganho,vi:c.vi,
+        act:()=>{const q=SB.pool[c.q].indexOf(c.vi);if(q<1)return false;SB.pool[c.q].splice(q,1);const m=FLEET[c.vi];m.home=j;SB.tr.push({id:m.frota,v:c.vi,mot:m.mot[turnoIdx(t)],turno:turnoIdx(t),f:j,u:maisPerto(j),carga:0,st:'volta',tSai:t,tLib:t,tFim:t+c.tt,d:c.d,desloc:true,leg:{from:{x:F[c.q].x,y:F[c.q].y},to:{x:f.x,y:f.y},t0:t,t1:t+c.tt,st:'volta'}});SB.k.diesel+=c.L*P.diesel;SB.k.km+=c.d;return true}}]:[],acao:c?'Remanejar':null})});
+  // 5) unidade vai passar do máximo
+  U.forEach((u,i)=>{if(stopAt(i,t))return;const v=SB.est[i]/u.tonV,pv=previsao(i,180);if(v>=u.maxV||pv.enche==null||pv.enche>90)return;const pico=Math.max(...pv.ser.map(p=>p[1])),exc=(pico-u.maxV)*u.tonV,filaX=exc/u.tmin;
+    const fr=F.map((f,j)=>j).filter(j=>maisPerto(j)===i),ins=SB.tr.filter(k=>k.u===i&&k.st==='ida'),insT=ins.reduce((a,k)=>a+k.carga,0);out.push({key:'enche'+i,conta:[`<b>Estoque agora</b>: ${fmt(v,1)} voltas (${fmt(SB.est[i],0)} t). Máximo: ${u.maxV} voltas (${fmt(u.maxV*u.tonV,0)} t).`,`<b>Entrando</b>: ${ins.length} caminhões a caminho (${fmt(insT,0)} t) + uns ${fmt(pv.rin*60,0)} t/h depois deles.`,`<b>Saindo</b>: a moenda consome ${fmt(u.tmin,1)} t/min = ${fmt(u.tmin*60,0)} t/h.`,`<b>Saldo</b>: entra mais do que sai, então o estoque sobe até <b>${fmt(pico,1)} voltas</b> e passa do máximo às ${hhmm(t+pv.enche)}.`,`<b>Efeito</b>: ${fmt(exc,0)} t acima do máximo ÷ ${fmt(u.tmin,1)} t/min = <b>${dur(filaX)} a mais de fila</b> por caminhão. Com uns ${Math.round(exc/P.cargaMed)} caminhões nessa situação, × R$ ${fmt(P.hora,0)}/h ≈ ${brl(Math.round(exc/P.cargaMed)*filaX/60*P.hora)}.`],sev:'info',ic:'▲',titulo:`${u.nome} passa do máximo às ${hhmm(t+pv.enche)}`,
+      texto:`O pico previsto é ${fmt(pico,1)} voltas, ${fmt(exc,0)} t acima do máximo. Isso dá cerca de ${dur(filaX)} a mais de fila para cada caminhão. O Bússola já vai desviar as próximas cargas${fr.length?` de ${fr.map(j=>F[j].id).join(', ')}`:''}. Se não quiser rodar mais longe, reduza o ritmo de corte dessas frentes.`,
+      naoFazer:Math.round(exc/P.cargaMed)*filaX/60*P.hora,fazer:0,ganho:Math.round(exc/P.cargaMed)*filaX/60*P.hora,itens:[],acao:null,auto:true})});
+  const ord={crit:0,warn:1,info:2,ok:3};out.sort((a,b)=>ord[a.sev]-ord[b.sev]||b.ganho-a.ganho);SUG=out;return out}
+function aplicarSug(sg,idx){const its=idx==null?sg.itens:[sg.itens[idx]];let n=0,g=0;its.forEach(it=>{if(it.act&&it.act()){n++;g+=it.ganho}});
+  if(n){APLIC.unshift({t:SB.t,titulo:sg.titulo,n,ganho:g,auto:!!sg._auto});feed('ok',`Sugestão aplicada${sg._auto?' (automática)':''}: ${sg.titulo}. ${n} ação(ões), ganho estimado ${brl(g)}.`);SUGt=-1}return n}
+let lastSugRender=0;
+const VISTO=new Set();
+function renderSug(force){const S=gerarSug(),now=performance.now();S.forEach(x=>{if(!VISTO.has(x.key)){VISTO.add(x.key);OPENEX.add(x.key+':c')}});
+  if(!force&&(now-lastSugRender<2500||document.querySelector('#pg-sugestoes:hover .btn'))){}else{lastSugRender=now;
+  const nC=S.filter(x=>x.sev==='crit').length,nW=S.filter(x=>x.sev==='warn').length,pot=S.filter(x=>x.itens.length).reduce((a,x)=>a+x.ganho,0),apG=APLIC.reduce((a,x)=>a+x.ganho,0);
+  $('#sgKpis').innerHTML=[['Críticas',nC,'agir agora'],['Atenção',nW,'compensa agir'],['Informativas',S.length-nC-nW,'acompanhar'],['Ganho possível agora',brl(pot),'se aplicar todas'],['Aplicadas',APLIC.length,'nesta sessão'],['Ganho das aplicadas',brl(apG),'estimado na hora']].map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
+  $('#sgList').innerHTML=S.length?S.map((sg,n)=>`<div class="card sg ${sg.sev}" id="sg-${sg.key}"><div class="st"><div class="ic">${sg.ic}</div><div style="flex:1;min-width:0"><h4>${sg.titulo}</h4><p>${sg.texto}</p></div></div>
+    ${sg.conta?`<button class="exb" data-exk="${sg.key}">${OPENEX.has(sg.key+':c')?'▾ Esconder a conta':'▸ Ver a conta: por que o sistema diz isso'}</button>${OPENEX.has(sg.key+':c')?`<div class="conta"><ol>${sg.conta.map(x=>`<li>${x}</li>`).join('')}</ol></div>`:''}`:''}
+    ${sg.naoFazer>0||sg.ganho>0?`<div class="costs"><div class="n">Sem fazer nada<b>${brl(sg.naoFazer)}</b></div><div>Fazendo<b>${brl(Math.max(0,sg.fazer))}</b></div><div class="g">Ganho${sg.auto?' (automático)':''}<b>${brl(sg.ganho)}</b></div></div>`:''}
+    ${sg.itens.map((it,q)=>`<div class="sgi"><div><b data-o="t:${it.vi}">${it.titulo} ›</b><div class="d">${it.det}</div></div><b class="num" style="color:var(--ok)">+${brl(it.ganho)}</b><button class="btn ghost sm" data-sg="${sg.key}:${q}">Aplicar</button>
+      ${it.conta?`<div style="grid-column:1/-1"><button class="exb" data-exk="${sg.key}:${q}">${OPENEX.has(sg.key+':'+q)?'▾ Esconder a conta':'▸ Ver a conta deste caminhão'}</button>${OPENEX.has(sg.key+':'+q)?`<div class="conta"><ol>${it.conta.map(x=>`<li>${x}</li>`).join('')}</ol></div>`:''}</div>`:''}</div>`).join('')}
+    ${sg.extra?`<div class="sgi" style="grid-template-columns:1fr"><div><b>${sg.extra.titulo}</b><div><button class="exb" data-exk="${sg.key}:x">${OPENEX.has(sg.key+':x')?'▾ Esconder a conta':'▸ Ver a conta'}</button></div>${OPENEX.has(sg.key+':x')?`<div class="conta"><ol>${sg.extra.conta.map(x=>`<li>${x}</li>`).join('')}</ol></div>`:''}</div></div>`:''}
+    ${sg.acao?`<div style="margin-top:10px;text-align:right"><button class="btn y" data-sg="${sg.key}:all">${sg.acao}</button></div>`:''}</div>`).join('')
+    :'<div class="card sg ok"><div class="st"><div class="ic">✓</div><div><h4>Tudo sob controle</h4><p>Nenhuma unidade em risco de falta de cana, nenhuma moenda parada com fila e nenhum caminhão indo para o lugar errado.</p></div></div></div>';
+  // rotas que não compensam
+  const t24=SB.t-1440,rows=[];F.forEach((f,j)=>{const R=U.map((u,i)=>calcRota(j,i,P.cargaMed,false)),b=R.reduce((a,c)=>c.tot<a.tot?c:a);R.forEach(r=>{if(r===b)return;const dif=r.tot-b.tot;if(dif<300)return;
+    const n=SB.log.filter(e=>e.t>=t24&&e.f===j&&e.u===r.i).length;rows.push({j,r,b,dif,n,be:dif/(P.hora/60)})})});rows.sort((a,b)=>b.n*b.dif-a.n*a.dif||b.dif-a.dif);
+  $('#sgRotas').innerHTML=`<tr><th>Rota</th><th class="n">Distância</th><th class="n">Custo/viagem</th><th>Mais barata</th><th class="n">A mais por viagem</th><th class="n">Viagens 24h</th><th class="n">Custo extra 24h</th><th>Só compensa se…</th></tr>`+
+    rows.map(x=>`<tr><td><b>${F[x.j].id}</b> → <span class="sw" style="background:${ucol(x.r.i)}"></span>${U[x.r.i].nome}</td><td class="n">${fmt(x.r.d,0)} km</td><td class="n">${brl(x.r.tot)}</td><td><span class="sw" style="background:${ucol(x.b.i)}"></span>${U[x.b.i].nome} (${brl(x.b.tot)})</td><td class="n"><b>${brl(x.dif)}</b></td><td class="n">${x.n}</td><td class="n">${x.n?brl(x.n*x.dif):'—'}</td><td style="white-space:normal;min-width:220px">a fila em ${nm(x.b.i)} passar de <b>${dur(x.be)}</b> ou a moenda dela parar<div class="hint">${brl(x.dif)} ÷ R$ ${fmt(P.hora,0)}/h = ${dur(x.be)} de caminhão parado</div></td></tr>`).join('');
+  $('#sgApN').textContent=`${APLIC.length} · ganho estimado ${brl(apG)}`;
+  $('#sgAp').innerHTML=`<tr><th>Hora</th><th>Sugestão</th><th class="n">Ações</th><th class="n">Ganho estimado</th><th>Modo</th></tr>`+(APLIC.map(a=>`<tr><td class="num">${diaHora(a.t)}</td><td style="white-space:normal">${a.titulo}</td><td class="n">${a.n}</td><td class="n">${brl(a.ganho)}</td><td>${a.auto?'automática':'manual'}</td></tr>`).join('')||'<tr><td colspan="5" class="hint">Nenhuma ainda.</td></tr>')}
+}
+function sugTick(){const S=gerarSug(),nb=S.filter(x=>x.sev==='crit'||x.sev==='warn').length;$('#sgBadge').textContent=nb||'';
+  if($('#sgAuto').checked){const min=+$('#sgMin').value||500;S.filter(x=>x.itens.length&&x.ganho>=min).forEach(x=>{x._auto=true;aplicarSug(x)})}
+  const top=S.filter(x=>x.sev!=='info').slice(0,4);$('#sgHome').style.display=top.length?'':'none';
+  if(top.length)$('#sgHomeList').innerHTML=top.map(x=>`<div class="sgmini" data-sgk="${x.key}"><i style="background:var(--${x.sev==='crit'?'crit':'warn'})">${x.ic}</i><span>${x.titulo}</span><b class="num" style="color:var(--ok)">${x.ganho>0?'+'+brl(x.ganho):''}</b></div>`).join('')}
+document.addEventListener('pointerdown',e=>{const x=e.target.closest('[data-exk]');if(x){let k=x.dataset.exk;if(!k.includes(':'))k+=':c';OPENEX.has(k)?OPENEX.delete(k):OPENEX.add(k);renderSug(true);return}
+  const b=e.target.closest('[data-sg]');if(b){const [key,q]=b.dataset.sg.split(':');const sg=SUG.find(x=>x.key===key);if(sg){aplicarSug(sg,q==='all'?null:+q);b.textContent='Aplicado ✓';b.disabled=true;setTimeout(()=>renderSug(true),400)}return}
+  const h=e.target.closest('[data-sgk]');if(h){go('sugestoes');setTimeout(()=>{const el=document.getElementById('sg-'+h.dataset.sgk);el&&el.scrollIntoView({behavior:'smooth',block:'center'})},120)}});
+
+/* motoristas & turnos */
+const diaSafraIni=t=>{const d=Math.floor((t-420)/1440)*1440+420;return d}; // dia de safra começa às 07h
+const motFoco=()=>document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#pg-motoristas')&&['INPUT','SELECT'].includes(document.activeElement.tagName);
+function motNome(dk){const [v,t]=dk.split('-').map(Number);const m=vmeta(SB,v);return m?m.mot[t]:'—'}
+function periodo(){const p=$('#mP').value,t=SB.t;if(p==='24h')return[t-1440,t+1];if(p==='turno')return[turnoIni(t),t+1];if(p==='dia')return[diaSafraIni(t),t+1];if(p==='ontem'){const d=diaSafraIni(t);return[d-1440,d]}return[-1e9,1e9]}
+function agg(list){const n=list.length,t=list.reduce((a,x)=>a+x.carga,0),km=list.reduce((a,x)=>a+2*x.d,0),L=list.reduce((a,x)=>a+dieselL(x.d),0);
+  return{n,t,km,L,ciclo:n?list.reduce((a,x)=>a+x.ciclo,0)/n:0,fila:n?list.reduce((a,x)=>a+x.W,0)/n:0,th:list.reduce((a,x)=>a+x.ciclo,0)>0?t/(list.reduce((a,x)=>a+x.ciclo,0)/60):0}}
+function barChart(el,o){ // o:{bars:[{x,label,v,color,tip}],fy,h}
+  if(el._hover)return;const W=Math.max(280,el.clientWidth||600),H=o.h||200,m={l:44,r:8,t:10,b:24},n=o.bars.length,bw=(W-m.l-m.r)/n,mx=Math.max(1,...o.bars.map(b=>b.v))*1.08;
+  const sy=v=>H-m.b-v/mx*(H-m.t-m.b),grid=cssv('--grid'),mute=cssv('--mute');let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  for(let k=0;k<=4;k++){const v=mx*k/4;s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${sy(v)}" y2="${sy(v)}" stroke="${grid}"/><text x="${m.l-6}" y="${sy(v)+4}" text-anchor="end" font-size="10.5" fill="${mute}" font-family="JetBrains Mono, monospace">${o.fy(v)}</text>`}
+  o.bars.forEach((b,k)=>{const x=m.l+k*bw+1,h=Math.max(0,H-m.b-sy(b.v));s+=`<path d="M${x},${H-m.b} v${-Math.max(0,h-3)} q0,-3 3,-3 h${Math.max(1,bw-8)} q3,0 3,3 v${Math.max(0,h-3)} z" fill="${b.color}"/>`;
+    if(b.label)s+=`<text x="${x+bw/2-1}" y="${H-7}" text-anchor="middle" font-size="10" fill="${mute}" font-family="JetBrains Mono, monospace">${b.label}</text>`;
+    s+=`<rect x="${m.l+k*bw}" y="${m.t}" width="${bw}" height="${H-m.t-m.b}" fill="transparent" data-k="${k}"/>`});
+  el.innerHTML=s+'</svg>';
+  el.querySelectorAll('rect[data-k]').forEach(r=>{const b=o.bars[+r.dataset.k];const h=e=>{const pt=e.touches?e.touches[0]:e;el._hover=true;showTip(b.tip,pt.clientX,pt.clientY)};r.addEventListener('mousemove',h);r.addEventListener('touchstart',h,{passive:true});r.addEventListener('mouseleave',()=>{el._hover=false;hideTip()});r.addEventListener('touchend',()=>setTimeout(()=>{el._hover=false;hideTip()},1500))})}
+function renderMot(){
+  const [a,b]=periodo(),ft=$('#mT').value,ff=$('#mF').value,q=$('#mQ').value.trim().toUpperCase();
+  const T=SB.trips.filter(x=>x.tFim>=a&&x.tFim<b&&(ft===''||x.turno==ft)&&(ff===''||x.f==ff));
+  const G=agg(T),tc=turnoIdx(SB.t),drivers={};T.forEach(x=>(drivers[x.dk]=drivers[x.dk]||[]).push(x));
+  const nd=Object.keys(drivers).length;
+  const K=[['Viagens completas',fmt(G.n,0),`${nd} motoristas`],['Toneladas',fmt(G.t,0)+' t',G.n?`${fmt(G.t/G.n,1)} t por viagem`:'—'],['Ciclo médio',dur(G.ciclo),'saída → descarga → volta'],['Fila média',dur(G.fila),'esperando descarregar'],['Diesel',fmt(G.L,0)+' L',brl(G.L*P.diesel)],['Produtividade',fmt(G.th,1)+' t/h','por caminhão rodando']];
+  $('#mKpis').innerHTML=K.map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
+  // por hora (últimas 24h, despacho)
+  const h0=Math.floor(SB.t/60)*60-23*60,bars=[];
+  for(let k=0;k<24;k++){const t0=h0+k*60,L=SB.log.filter(e=>e.t>=t0&&e.t<t0+60&&(ff===''||e.f==ff)),ti=turnoIdx(t0+1),ton=L.reduce((s,e)=>s+e.carga,0);
+    bars.push({v:ton,color:cssv(['--g1','--g2','--g3'][ti]),label:k%3===0?hhmm(t0).slice(0,2)+'h':'',tip:`<b>${hhmm(t0)}–${hhmm(t0+60)}</b> · Turno ${TURNOS[ti].id}<br>${L.length} cargas · <b>${fmt(ton,0)} t</b>${k===23?'<br><i>hora em andamento</i>':''}`})}
+  barChart($('#mHour'),{bars,h:210,fy:v=>fmt(v,0)});
+  // comparação de turnos
+  const pv=$('#mP').value,D0=pv==='dia'||pv==='ontem'?[a,b]:[SB.t-1440,SB.t+1];
+  const TT=[0,1,2].map(ti=>agg(SB.trips.filter(x=>x.tFim>=D0[0]&&x.tFim<D0[1]&&x.turno===ti&&(ff===''||x.f==ff))));const mt=Math.max(1,...TT.map(x=>x.t));
+  $('#mTurnos').innerHTML=`<div class="hint" style="margin-bottom:8px">${pv==='ontem'?'Dia anterior (07h às 07h)':pv==='dia'?'Dia de safra atual (desde 07h)':'Últimas 24 horas'}</div>`+TT.map((x,ti)=>`<div style="margin:10px 0 14px"><div style="display:flex;justify-content:space-between;align-items:baseline"><b>Turno ${TURNOS[ti].id} <span class="hint">${String(TURNOS[ti].ini).padStart(2,'0')}h–${String(TURNOS[ti].fim).padStart(2,'0')}h</span>${ti===tc?' <span class="pill ok">agora</span>':''}</b><b class="num">${fmt(x.t,0)} t</b></div>
+    <div class="prog sm" style="margin:6px 0"><div style="width:${x.t/mt*100}%;background:var(${['--g1','--g2','--g3'][ti]})"></div></div>
+    <div class="mini">${x.n} viagens · ciclo <b>${dur(x.ciclo)}</b> · fila <b>${dur(x.fila)}</b> · ${fmt(x.L,0)} L</div></div>`).join('');
+  // fila por unidade × turno
+  const FT=U.map((u,i)=>[0,1,2].map(ti=>{const L=T.filter(x=>x.u===i&&x.turno===ti);return L.length?L.reduce((s,x)=>s+x.W,0)/L.length:null}));
+  const allF=FT.flat().filter(v=>v!=null),fhi=Math.max(1,...allF);
+  $('#mFila').innerHTML=`<tr><th>Unidade</th>${[0,1,2].map(ti=>`<th class="n">Turno ${TURNOS[ti].id}</th>`).join('')}<th class="n">Média</th></tr>`+FT.map((row,i)=>{const L=T.filter(x=>x.u===i),avg=L.length?L.reduce((s,x)=>s+x.W,0)/L.length:null;
+    return`<tr><td><span class="sw" style="background:${ucol(i)}"></span><b>${U[i].nome}</b></td>${row.map(v=>v==null?'<td class="n">—</td>':`<td class="n" style="background:rgba(207,61,61,${(v/fhi*0.32).toFixed(2)})">${dur(v)}</td>`).join('')}<td class="n"><b>${avg==null?'—':dur(avg)}</b></td></tr>`}).join('')+
+    `<tr><td colspan="5" class="hint" style="white-space:normal">Fila real na chegada (inclui espera de moenda parada). Mais vermelho = mais tempo parado.</td></tr>`;
+  // ranking
+  let rows=Object.entries(drivers).map(([dk,L])=>{const g=agg(L),[v,ti]=dk.split('-').map(Number),m=vmeta(SB,v);return{dk,v,ti,m,nome:m.mot[ti],...g}});
+  if(q)rows=rows.filter(r=>(r.nome+' '+r.m.frota).toUpperCase().includes(q));
+  rows.sort((x,y)=>y.t-x.t);
+  const best=rows[0],fast=rows.filter(r=>r.n>=2).sort((x,y)=>x.ciclo-y.ciclo)[0],slow=rows.filter(r=>r.n>=2).sort((x,y)=>y.fila-x.fila)[0];
+  $('#mDest').innerHTML=!rows.length?'<p class="hint">Sem viagens completas no período.</p>':
+    [[best,'🏆 Mais toneladas',r=>`${fmt(r.t,0)} t em ${r.n} viagens`],[fast,'⚡ Ciclo mais rápido',r=>`${dur(r.ciclo)} por viagem (${r.n} viagens)`],[slow,'⏳ Mais tempo em fila',r=>`${dur(r.fila)} de fila média: verificar destino e horário`]].filter(x=>x[0]).map(([r,t,f])=>
+    `<div class="lrow" style="grid-template-columns:1fr auto" data-o="m:${r.v*3+r.ti}"><div><div class="sub" style="font-size:11.5px;font-weight:700;color:var(--ink2)">${t}</div><b style="font-family:Inter">${r.nome}</b> <span class="sub">frota ${r.m.frota} · ${F[r.m.home].id} · turno ${TURNOS[r.ti].id}</span></div><div class="num" style="text-align:right">${f(r)}</div></div>`).join('');
+  $('#mN').textContent=`${rows.length} motoristas · toque para a ficha`;
+  $('#mTab').innerHTML=`<tr><th>#</th><th>Motorista</th><th>Frota</th><th>Frente</th><th>Turno</th><th class="n">Viagens</th><th class="n">Toneladas</th><th class="n">t/viagem</th><th class="n">Km</th><th class="n">Ciclo médio</th><th class="n">Fila média</th><th class="n">Diesel</th></tr>`+
+    rows.map((r,k)=>`<tr data-o="m:${r.v*3+r.ti}"><td class="num">${k+1}</td><td><b>${r.nome}</b></td><td class="num">${r.m.frota}</td><td>${F[r.m.home].id}</td><td>${TURNOS[r.ti].id}</td><td class="n">${r.n}</td><td class="n"><b>${fmt(r.t,0)} t</b></td><td class="n">${fmt(r.t/r.n,1)}</td><td class="n">${fmt(r.km,0)}</td><td class="n">${dur(r.ciclo)}</td><td class="n">${dur(r.fila)}</td><td class="n">${fmt(r.L,0)} L</td></tr>`).join('');
+}
+function fichaMot(id){const v=Math.floor(id/3),ti=id%3,m=vmeta(SB,v),dk=v+'-'+ti,d0=diaSafraIni(SB.t),L=SB.trips.filter(x=>x.dk===dk),H=L.filter(x=>x.tFim>=d0),g=agg(H),gt=agg(L),st=vehState(SB,v),onDuty=turnoIdx(SB.t)===ti;
+  let h=`<div class="fk">Motorista · ${turnoTxt(ti)}</div><div class="ft" style="font-family:Inter;font-size:24px">${m.mot[ti]}</div><div class="fs">Frota <b data-o="t:${v}">${m.frota} ›</b> · ${m.placa} · ${F[m.home].id} ${F[m.home].nome}</div>
+    <div style="margin-top:8px">${onDuty?`<span class="pill ok">● em serviço · ${ST_TXT[st.st][0]}</span>`:'<span class="pill neu">fora do turno</span>'}</div>`;
+  h+=`<div class="fh">Hoje (dia de safra desde 07h)</div><div class="kv"><div>Viagens<b>${g.n}</b></div><div>Toneladas<b>${fmt(g.t,0)} t</b></div><div>Ciclo médio<b>${dur(g.ciclo)}</b></div><div>Fila média<b>${dur(g.fila)}</b></div><div>Km<b>${fmt(g.km,0)}</b></div><div>Diesel<b>${fmt(g.L,0)} L</b></div></div>`;
+  h+=`<div class="fh">Toda a simulação</div><div class="kv"><div>Viagens<b>${gt.n}</b></div><div>Toneladas<b>${fmt(gt.t,0)} t</b></div><div>t por hora rodando<b>${fmt(gt.th,1)}</b></div><div>Fila média<b>${dur(gt.fila)}</b></div></div>`;
+  h+=`<div class="fh">Últimas viagens</div>${L.slice(-10).reverse().map(x=>`<div class="lrow" style="grid-template-columns:52px 1fr 70px"><span class="num">${hhmm(x.tSai)}</span><span>${F[x.f].id} → <b style="font-family:Inter;color:${ucol(x.u)}">${U[x.u].nome.replace(' do Oeste','')}</b> · ${fmt(x.carga,0)} t</span><span class="num" style="text-align:right">${dur(x.ciclo)}</span></div>`).join('')||'<p class="hint">nenhuma viagem completa ainda</p>'}`;
+  h+=`<div class="fh">Mesmo caminhão, outros turnos</div><div class="chips">${m.mot.map((n,q)=>q===ti?'':`<span data-o="m:${v*3+q}">${TURNOS[q].id}: ${n}</span>`).join('')}</div>`;return h}
+['#mP','#mT','#mF'].forEach(x=>$(x).onchange=renderMot);$('#mQ').oninput=renderMot;
+
+/* calculadora de rota */
+function calcRota(j,i,carga,incFila){const d=D[j][i],tI=d/P.velC*60,tV=d/P.velV*60,lI=d/P.kmLc,lV=d/P.kmLv,L=lI+lV;
+  let fila=0,parada=false;if(incFila){const a=avaliar(SB,j,carga,SB.t)[i];fila=a.W;parada=a.parada}
+  const ciclo=tI+fila+P.descarga+tV,cd=L*P.diesel,ch=ciclo/60*P.hora,tot=cd+ch;
+  return{i,d,tI,tV,lI,lV,L,fila,parada,ciclo,cd,ch,tot,rt:tot/carga,dt:cd/carga,lt:L/carga,vt:480/ciclo,co2:L*2.68}}
+const rotaFoco=()=>document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#pg-rotas')&&['INPUT','SELECT'].includes(document.activeElement.tagName);
+function renderRotas(){
+  const j=+$('#rF').value,carga=Math.max(1,+$('#rC').value||66),vd=Math.max(1,+$('#rV').value||1),inc=$('#rFila').checked;
+  const R=U.map((u,i)=>calcRota(j,i,carga,inc)),best=R.reduce((a,b)=>b.tot<a.tot?b:a),near=R.reduce((a,b)=>b.d<a.d?b:a);
+  $('#rCards').innerHTML=R.map(r=>{const u=U[r.i],isB=r===best;return`<div class="card ucard" style="${isB?'outline:2px solid var(--ok);outline-offset:-2px':''}"><div class="bar" style="background:${ucol(r.i)}"></div>
+    <div class="uhead"><b>${u.nome}</b>${isB?'<span class="pill ok">✓ mais barato</span>':r.parada?'<span class="pill crit">⏸ moenda parada</span>':`<span class="pill neu">+ ${brl(r.tot-best.tot)}</span>`}</div>
+    <div class="voltas"><span class="big">${brl(r.tot)}</span><span>por viagem</span></div>
+    <div class="fs" style="margin-top:2px"><b class="num">R$ ${fmt(r.rt,2)}</b> por tonelada · <b class="num">${fmt(r.lt,2)} L/t</b></div>
+    <div class="fh" style="margin-top:12px">Tempo</div>
+    <div class="kv"><div>Distância<b>${fmt(r.d,0)} km</b></div><div>Ida carregado<b>${dur(r.tI)}</b></div><div>Fila ${inc?'prevista':'(desligada)'}<b>${dur(r.fila)}</b></div><div>Descarga<b>${dur(P.descarga)}</b></div><div>Volta vazio<b>${dur(r.tV)}</b></div><div>Ciclo completo<b>${dur(r.ciclo)}</b></div></div>
+    <div class="fh">Diesel</div>
+    <div class="kv"><div>Ida carregado<b>${fmt(r.lI,1)} L</b></div><div>Volta vazio<b>${fmt(r.lV,1)} L</b></div><div>Total da viagem<b>${fmt(r.L,1)} L</b></div><div>Custo do diesel<b>${brl(r.cd)}</b></div><div>Diesel por tonelada<b>R$ ${fmt(r.dt,2)}</b></div><div>CO₂ da viagem<b>${fmt(r.co2,0)} kg</b></div></div>
+    <div class="fh">Produtividade</div>
+    <div class="kv"><div>Viagens por turno (8h)<b>${fmt(r.vt,1)}</b></div><div>t por caminhão no turno<b>${fmt(r.vt*carga,0)} t</b></div><div>Hora do caminhão<b>${brl(r.ch)}</b></div><div>Custo total / t<b>R$ ${fmt(r.rt,2)}</b></div></div></div>`}).join('');
+  const mx=Math.max(...R.map(r=>r.tot));
+  $('#rBars').innerHTML=R.slice().sort((a,b)=>a.tot-b.tot).map(r=>`<div style="display:grid;grid-template-columns:120px 1fr 86px;gap:10px;align-items:center;margin:9px 0"><b><span class="sw" style="background:${ucol(r.i)}"></span>${U[r.i].nome.replace(' do Oeste','')}</b>
+    <div class="stack" style="width:${r.tot/mx*100}%"><div style="flex:${r.cd};background:var(--g1)" data-t="Diesel: ${brl(r.cd)} (${fmt(r.L,0)} L)"></div><div style="flex:${r.ch};background:var(--g3)" data-t="Hora do caminhão: ${brl(r.ch)} (${dur(r.ciclo)})"></div></div><b class="num" style="text-align:right">${brl(r.tot)}</b></div>`).join('');
+  $$('#rBars [data-t]').forEach(d=>{const h=e=>{const pt=e.touches?e.touches[0]:e;showTip(d.dataset.t,pt.clientX,pt.clientY)};d.addEventListener('mousemove',h);d.addEventListener('touchstart',h,{passive:true});d.addEventListener('mouseleave',hideTip)});
+  const worst=R.reduce((a,b)=>b.tot>a.tot?b:a);
+  $('#rDiff').innerHTML=`<div class="callout ${best===near?'ok':''}">${best===near?`A unidade mais perto (<b>${U[near.i].nome}</b>) também é a mais barata agora.`:`A mais perto é <b>${U[near.i].nome}</b>, mas ${inc?'com a fila de agora ':''}a mais barata é <b>${U[best.i].nome}</b>: ${brl(near.tot-best.tot)} a menos por viagem.`}
+    Mandar para <b>${U[worst.i].nome}</b> em vez de <b>${U[best.i].nome}</b> custa <b>${brl(worst.tot-best.tot)} a mais por viagem</b>, ${fmt((worst.L-best.L),0)} L de diesel a mais. Com ${vd} viagens por dia, são <b>${brl((worst.tot-best.tot)*vd)} por dia</b>.</div>`;
+  $('#rProjSub').textContent=`${vd} viagens/dia · ${P.diasSafra} dias de safra`;
+  $('#rProj').innerHTML=`<tr><th>Unidade</th><th class="n">Diesel/dia</th><th class="n">R$/dia</th><th class="n">Diesel na safra</th><th class="n">R$ na safra</th></tr>`+
+    R.map(r=>`<tr class="${r===best?'best':''}"><td><span class="sw" style="background:${ucol(r.i)}"></span><b>${U[r.i].nome}</b></td><td class="n">${fmt(r.L*vd,0)} L</td><td class="n">${brl(r.cd*vd)}</td><td class="n">${fmt(r.L*vd*P.diasSafra/1000,1)} mil L</td><td class="n">${brl(r.cd*vd*P.diasSafra)}</td></tr>`).join('')+
+    `<tr><td colspan="5" class="hint" style="white-space:normal">Só o diesel. A hora do caminhão (motorista, manutenção, depreciação) entra no custo por viagem acima.</td></tr>`;
+  // matriz
+  const M=F.map((f,jj)=>U.map((u,i)=>calcRota(jj,i,carga,inc)));const all=M.flat().map(r=>r.rt),lo=Math.min(...all),hi=Math.max(...all);
+  const shade=v=>{const t=(v-lo)/((hi-lo)||1);const a=[236,233,251],b=[74,59,181];return`rgb(${a.map((x,k)=>Math.round(x+(b[k]-x)*t)).join(',')})`};
+  $('#rMat').innerHTML=`<tr><th>Fazenda</th>${U.map((u,i)=>`<th class="n"><span class="sw" style="background:${ucol(i)}"></span>${u.nome}</th>`).join('')}<th>Mais barato</th></tr>`+
+    M.map((row,jj)=>{const b=row.reduce((a,c)=>c.tot<a.tot?c:a);return`<tr data-r="${jj}" style="cursor:pointer;${jj===j?'outline:2px solid var(--acc);outline-offset:-2px':''}"><td><b>${F[jj].id}</b> · ${F[jj].nome}</td>${row.map(r=>{const t=(r.rt-lo)/((hi-lo)||1);return`<td class="n" style="background:${shade(r.rt)};color:${t>.55?'#fff':'#1d1e20'};${r===b?'font-weight:800;box-shadow:inset 0 0 0 2px var(--ok)':''}">R$ ${fmt(r.rt,2)}<div style="font-size:10.5px;opacity:.8">${fmt(r.d,0)} km · ${dur(r.tI)} · ${fmt(r.L,0)} L</div></td>`}).join('')}<td><span class="sw" style="background:${ucol(b.i)}"></span>${U[b.i].nome}</td></tr>`}).join('');
+  $$('#rMat tr[data-r]').forEach(tr=>tr.onclick=()=>{$('#rF').value=tr.dataset.r;renderRotas();window.scrollTo({top:0,behavior:'smooth'})});
+  const r0=R[best.i];
+  $('#rExp').innerHTML=`<b>Diesel</b> = distância ÷ consumo carregado (ida) + distância ÷ consumo vazio (volta). Exemplo de ${F[j].id} até ${U[best.i].nome}: <code>${fmt(r0.d,0)} km ÷ ${fmt(P.kmLc,2)} km/L + ${fmt(r0.d,0)} km ÷ ${fmt(P.kmLv,2)} km/L = ${fmt(r0.L,1)} L</code> × R$ ${fmt(P.diesel,2)} = <b>${brl(r0.cd)}</b>.<br>
+    <b>Tempo</b> = ida a ${P.velC} km/h + ${inc?'fila prevista agora (estoque da usina e caminhões a caminho) + ':''}descarga de ${P.descarga} min + volta a ${P.velV} km/h.<br>
+    <b>Hora do caminhão</b> = ciclo completo × R$ ${fmt(P.hora,0)}/h (motorista, manutenção, pneus, depreciação).<br>
+    <b>Distância</b>: aproximada pela estrada (linha reta × 1,3 + 3 km). Troque pelos km reais do COA quando tiver. Os parâmetros ficam em ⚙ Parâmetros e são os mesmos das Configurações.`;
+}
+function renderRotaPar(){const ks=['diesel','kmLc','kmLv','velC','velV','descarga','hora','diasSafra'];
+  $('#rPar').innerHTML=`<div class="frm">${ks.map(k=>`<label>${PLAB[k][0]} (${PLAB[k][1]})<input type="number" step="any" data-rp="${k}" value="${P[k]}"></label>`).join('')}</div>`;
+  $$('#rPar input').forEach(inp=>inp.oninput=()=>{const v=parseFloat(inp.value);if(v>0){P[inp.dataset.rp]=v;renderRotas()}})}
+$('#rParBtn').onclick=()=>{const el=$('#rPar');const show=el.style.display==='none';el.style.display=show?'block':'none';if(show)renderRotaPar()};
+['#rF','#rFila'].forEach(x=>$(x).onchange=renderRotas);['#rC','#rV'].forEach(x=>$(x).oninput=renderRotas);
+if(!PLAB.velC[1])0;
+
+/* despacho */
+function calcDesp(){
+  const j=+$('#dFrente').value,carga=+$('#dCarga').value||66;
+  const av=avaliar(SB,j,carga,SB.t),best=escolher(av,j),iA=regraAtual(SB,j),alt=av[iA];
+  const allFull=av.every(a=>a.cheia||a.parada);
+  const why=[];
+  why.push(`Chega em <b>${dur(best.tIda)}</b> (${fmt(best.d,0)} km) com o pátio em <b>${fmt(best.Sp/U[best.i].tonV,1)} voltas</b>.`);
+  why.push(best.W>1?`Fila prevista de <b>${dur(best.W)}</b>.`:'Descarrega direto, <b>sem fila</b>.');
+  if(best.bonus>0)why.push(`A unidade está perto do mínimo: essa carga ajuda a moenda a não ficar sem cana (bônus de ${brl(best.bonus)}).`);
+  av.filter(a=>a.parada).forEach(a=>why.push(`${U[a.i].nome}: moenda parada até ${hhmm(a.stop.fim)}.`));
+  $('#dRec').innerHTML=`<h3>Recomendação</h3><div class="rec"><div><div class="arrow">Mande para</div><div class="dest" style="color:${ucol(best.i)}">${U[best.i].nome}</div></div>
+    <div class="kpi" style="margin-left:auto"><div class="l">Custo estimado</div><div class="v">${brl(best.total)}</div></div></div>
+    <ul class="why">${why.map(w=>`<li>${w}</li>`).join('')}</ul>
+    ${iA!==best.i?`<div class="callout ${alt.parada?'crit':''} mt">A <b>regra atual</b> mandaria para <b>${U[iA].nome}</b>${alt.parada?', que está com a <b>moenda parada</b>':alt.cheia?', que vai chegar <b>acima do máximo</b>':''}. Custaria <b>${brl(alt.total-best.total)} a mais</b> neste caminhão.</div>`:`<div class="callout ok mt">A regra atual concordaria com o Bússola neste caso.</div>`}
+    ${allFull?`<div class="callout crit mt"><b>Todas as unidades estão cheias ou paradas.</b> Considere segurar o caminhão na frente e reduzir o ritmo de corte. Rodar longe só gasta diesel e hora de caminhão.</div>`:''}`;
+  const mxT=Math.max(...av.map(a=>a.diesel+a.hcam+a.atr+a.pen));
+  $('#dStack').innerHTML=av.slice().sort((a,b)=>a.total-b.total).map(a=>{const parts=[[a.diesel,'--g1','Diesel'],[a.hcam,'--g2','Hora caminhão'],[a.atr,'--g3','ATR perdido'],[a.pen,'--crit','Penalidade']];
+    return`<div style="display:grid;grid-template-columns:130px 1fr 90px;gap:10px;align-items:center;margin:8px 0"><div style="font-weight:700"><span class="sw" style="background:${ucol(a.i)}"></span>${U[a.i].nome}</div>
+    <div class="stack" style="width:${Math.max(4,(a.diesel+a.hcam+a.atr+a.pen)/mxT*100)}%">${parts.filter(p=>p[0]>0.5).map(p=>`<div style="flex:${p[0]};background:var(${p[1]})" data-t="${p[2]}: ${brl(p[0])}"></div>`).join('')}</div>
+    <div class="num" style="text-align:right;font-weight:700">${brl(a.total)}</div></div>`}).join('');
+  $$('#dStack [data-t]').forEach(d=>{const h=e=>{const pt=e.touches?e.touches[0]:e;showTip(d.dataset.t,pt.clientX,pt.clientY)};d.addEventListener('mousemove',h);d.addEventListener('touchstart',h,{passive:true});d.addEventListener('mouseleave',hideTip)});
+  $('#dTab').innerHTML=`<tr><th>Unidade</th><th>Situação</th><th class="n">Distância</th><th class="n">Viagem</th><th class="n">Voltas na chegada</th><th class="n">Fila prev.</th><th class="n">Diesel</th><th class="n">Hora cam.</th><th class="n">ATR</th><th class="n">Penalidade</th><th class="n">Bônus</th><th class="n">Total</th></tr>`+
+    av.slice().sort((a,b)=>a.total-b.total).map(a=>`<tr class="${a.i===best.i?'best':a.parada?'bad':''}"><td><span class="sw" style="background:${ucol(a.i)}"></span><b>${U[a.i].nome}</b></td><td>${a.parada?'<span class="pill crit">⏸ parada</span>':a.cheia?'<span class="pill warn">▲ cheia</span>':'<span class="pill ok">● ok</span>'}</td><td class="n">${fmt(a.d,0)} km</td><td class="n">${dur(a.tIda)}</td><td class="n">${fmt(a.Sp/U[a.i].tonV,1)}</td><td class="n">${dur(a.W)}</td><td class="n">${brl(a.diesel)}</td><td class="n">${brl(a.hcam)}</td><td class="n">${brl(a.atr)}</td><td class="n">${brl(a.pen)}</td><td class="n">${a.bonus?'− '+brl(a.bonus):'—'}</td><td class="n"><b>${brl(a.total)}</b></td></tr>`).join('');
+}
+$('#dCalc').onclick=calcDesp;
+function syncCarga(){const j=+$('#dFrente').value,L=loadingAt(SB,j);$('#dCarga').value=Math.round(L.carga);$('#dInfo').innerHTML=L.vi!=null?`Carregando agora em ${F[j].id}: <b>frota ${FLEET[L.vi].frota}</b> (${fmt(L.fill*100,0)}%, enche em ${dur(L.end-SB.t)}, ~${fmt(L.carga,0)} t).`:`${F[j].id} está sem caminhão no momento.`}
+$('#dFrente').onchange=()=>{syncCarga();calcDesp()};
+
+/* predição */
+function renderPred(){
+  const t=SB.t;
+  const corte=capCorte(t)*fator(t)*ctrlCorte()*60,cap=U.reduce((a,u,i)=>a+rateKnown(i,t,t),0)*60;
+  const vt=SB.est.reduce((a,b)=>a+b,0);
+  $('#predBal').innerHTML=[
+    ['Estoque total nas 3 unidades',fmt(vt,0)+' t',`dura ${dur(vt/(cap/60||1))} na moagem atual`],
+    ['Moagem prevista',fmt(cap/60,1)+' t/min',`${fmt(cap,0)} t/h`],
+    ['Corte previsto',fmt(corte/60,1)+' t/min',(corte>cap?'acima':'abaixo')+` da moagem em ${fmt(Math.abs(corte-cap),0)} t/h`],
+  ].map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
+  if(!$('#predCards').children.length)$('#predCards').innerHTML=U.map((u,i)=>`<div class="card"><h3><span class="sw" style="background:var(${u.cv})"></span>${u.nome}<span class="r" id="pst${i}"></span></h3><div class="umet" id="pm${i}" style="margin:0 0 10px;grid-template-columns:repeat(3,1fr)"></div><div class="chart" id="pc${i}"></div></div>`).join('');
+  U.forEach((u,i)=>{
+    const pv=previsao(i,360),hist=HIST.filter(h=>h.t>=t-360).map(h=>[h.t,h.v[i]]);hist.push([t,SB.est[i]/u.tonV]);
+    const stop=stopAt(i,t),st=statusUnit(i);
+    $('#pst'+i).innerHTML=`<span class="pill ${st.c}">${st.t}</span>`;
+    $('#pm'+i).innerHTML=`<div>Moagem<b>${stop?'0,0':fmt(u.tmin,1)} t/min</b></div><div>Estoque<b>${fmt(SB.est[i]/u.tonV,1)} voltas</b></div><div>Autonomia<b>${dur(SB.est[i]/u.tmin)}</b></div>
+      <div>Chega por hora<b>${fmt(pv.rin*60,0)} t/h</b></div><div>Enche (máx)<b>${pv.enche!=null?'em '+dur(pv.enche):'não em 6h'}</b></div><div>Mínimo<b>${pv.seca!=null?'seca em '+dur(pv.seca):pv.minimo!=null?'em '+dur(pv.minimo):'não em 6h'}</b></div>`;
+    const c=ucol(i),ymax=Math.max(8,...pv.ser.map(p=>p[1]),...hist.map(p=>p[1]));
+    lineChart($('#pc'+i),{x0:t-360,x1:t+360,y0:0,y1:Math.ceil(ymax),yt:4,h:200,nowX:t,fy:(v,full)=>fmt(v,1)+(full?' voltas':''),
+      bands:[{y0:0,y1:u.minV,color:cssv('--warn'),op:.08},{y0:u.maxV,y1:Math.ceil(ymax),color:cssv('--crit'),op:.07}],
+      refs:[{y:u.minV,label:'mín '+u.minV,color:cssv('--warn')},{y:u.maxV,label:'máx '+u.maxV,color:cssv('--crit')}],
+      series:[{name:'Real',color:c,pts:hist},{name:'Previsto',color:c,pts:pv.ser,dash:true}]});
+  });
+  $('#predExplain').innerHTML=`<b>Autonomia</b> = estoque (t) ÷ moagem (t/min). Exemplo em Iturama agora: <code>${fmt(SB.est[0],0)} t ÷ ${fmt(U[0].tmin,1)} t/min = ${dur(SB.est[0]/U[0].tmin)}</code>.<br>
+    <b>Voltas</b> = estoque (t) ÷ toneladas por volta. Hoje: Iturama 1 volta = ${U[0].tonV} t, Limeira = ${U[1].tonV} t, Carneirinho = ${U[2].tonV} t. Ajuste em Configurações.<br>
+    <b>Linha tracejada</b> = previsão para as próximas 6 horas, feita a cada 5 minutos: soma os caminhões que já estão a caminho (pela hora de chegada), depois a média de cana que chegou nas últimas 2 horas, e tira o que a moenda consome. Paradas programadas e paradas já em andamento entram na conta (moagem zero até a previsão de volta).<br>
+    Com isso o sistema sabe <b>quando cada unidade vai encher</b> (passar do máximo) e <b>quando vai faltar cana</b>, e usa isso para escolher o destino de cada caminhão.`;
+}
+
+/* comparativo */
+function renderCmp(){
+  const a=SA.k,b=SB.k;const rows=[
+    ['Custo logístico total',kTotal(a),kTotal(b),brl],['Diesel',a.diesel,b.diesel,brl],['Hora de caminhão (viagens concluídas)',a.hcam,b.hcam,brl],['ATR perdido',a.atr,b.atr,brl],['Custo de moenda sem cana',a.falta,b.falta,brl],
+    ['Fila média por caminhão',a.fila/(a.nFila||1),b.fila/(b.nFila||1),dur],['Moenda sem cana (minutos)',SA.falta.reduce((x,y)=>x+y,0),SB.falta.reduce((x,y)=>x+y,0),dur],['Caminhões que chegaram com moenda parada',a.parada,b.parada,v=>fmt(v,0)],['Km rodados',a.km,b.km,v=>fmt(v,0)+' km'],['Despachos',a.desp,b.desp,v=>fmt(v,0)]];
+  $('#cmpTab').innerHTML=`<tr><th>Indicador</th><th class="n"><span class="sw" style="background:var(--pA)"></span>Regra atual</th><th class="n"><span class="sw" style="background:var(--pB)"></span>Bússola</th><th class="n">Diferença</th></tr>`+
+    rows.map(r=>{const d=r[1]-r[2];const good=d>0;return`<tr><td>${r[0]}</td><td class="n">${r[3](r[1])}</td><td class="n">${r[3](r[2])}</td><td class="n">${Math.abs(d)<1e-6?'—':`<span class="pill ${good?'ok':'crit'}">${good?'▼':'▲'} ${r[3](Math.abs(d))}</span>`}</td></tr>`}).join('');
+  const H=HIST;if(H.length<2)return;const x0=H[0].t,x1=H[H.length-1].t;const ymax=Math.max(...H.map(h=>Math.max(h.cA,h.cB)))*1.05||1;
+  lineChart($('#cmpChart'),{x0,x1,y0:0,y1:ymax,h:260,xstep:x1-x0>2880?720:x1-x0>720?240:120,rpad:96,fy:(v,full)=>full?brl(v):(v>=1e6?fmt(v/1e6,1)+' mi':fmt(v/1000,0)+' mil'),
+    series:[{name:'Regra atual',color:cssv('--pA'),pts:H.map(h=>[h.t,h.cA]),label:'Regra atual'},{name:'Bússola',color:cssv('--pB'),pts:H.map(h=>[h.t,h.cB]),label:'Bússola'}]});
+}
+
+/* histórico */
+function renderHist(){
+  const u=$('#hU').value,f=$('#hF').value,q=$('#hQ').value.trim().toUpperCase(),df=$('#hDiff').checked;
+  const L=SB.log.filter(e=>(u===''||e.u==u)&&(f===''||e.f==f)&&(!q||e.id.includes(q)||e.mot.toUpperCase().includes(q))&&(!df||e.uA!==e.u)).slice(-400).reverse();
+  $('#hN').textContent=`${L.length} de ${SB.log.length} registros`;
+  $('#hTab').innerHTML=`<tr><th>Hora</th><th>Frota</th><th>Motorista</th><th>Turno</th><th>Frente</th><th>Destino</th><th class="n">Carga</th><th class="n">Distância</th><th class="n">Voltas na chegada</th><th class="n">Fila prev.</th><th class="n">Custo</th><th>Regra atual</th><th class="n">Economia</th></tr>`+
+    L.map(e=>`<tr data-o="t:${e.v}"><td class="num">${diaHora(e.t)}</td><td><b>${e.id}</b></td><td>${e.mot}</td><td>${TURNOS[e.turno].id}</td><td>${F[e.f].id} · ${F[e.f].nome}</td><td><span class="sw" style="background:${ucol(e.u)}"></span>${U[e.u].nome}</td><td class="n">${fmt(e.carga,0)} t</td><td class="n">${fmt(e.d,0)} km</td><td class="n">${fmt(e.Sp/U[e.u].tonV,1)}</td><td class="n">${dur(e.W)}</td><td class="n">${brl(e.total)}</td><td>${e.uA===e.u?'igual':U[e.uA].nome}</td><td class="n">${e.uA===e.u?'—':brl(e.delta)}</td></tr>`).join('');
+}
+['#hU','#hF','#hDiff'].forEach(s=>$(s).onchange=renderHist);$('#hQ').oninput=renderHist;
+
+/* config */
+function renderCfg(){
+  $('#cfgU').innerHTML=`<tr><th>Unidade</th><th>Moagem (t/min)</th><th>1 volta (t)</th><th>Mínimo (voltas)</th><th>Máximo (voltas)</th><th>Pátio sem fila (voltas)</th><th>Teste</th></tr>`+
+    U.map((u,i)=>`<tr><td><span class="sw" style="background:var(${u.cv})"></span><b>${u.nome}</b></td>${['tmin','tonV','minV','maxV','hiloV'].map(k=>`<td><input type="number" step="${k==='tonV'?10:0.5}" data-u="${i}" data-k="${k}" value="${u[k]}"></td>`).join('')}<td><button class="btn ghost" data-stop="${i}">Parar moenda 90 min</button></td></tr>`).join('');
+  $('#cfgP').innerHTML=Object.keys(PLAB).map(k=>`<tr><td>${PLAB[k][0]}</td><td><input type="number" step="any" data-p="${k}" value="${P[k]}"></td><td class="hint">${PLAB[k][1]}</td></tr>`).join('');
+  $$('#cfgU input').forEach(inp=>inp.onchange=()=>{const v=parseFloat(inp.value);if(v>0){U[+inp.dataset.u][inp.dataset.k]=v;feed('inf',`Configuração alterada: ${U[+inp.dataset.u].nome}, ${inp.dataset.k} = ${fmt(v,1)}.`)}});
+  $$('#cfgP input').forEach(inp=>inp.onchange=()=>{const v=parseFloat(inp.value);if(v>0)P[inp.dataset.p]=v});
+  $$('[data-stop]').forEach(b=>b.onclick=()=>{const i=+b.dataset.stop;STOPS.push({u:i,ini:SB.t+0.01,fim:SB.t+90,tipo:'Parada de teste',prog:false});b.textContent='Parada lançada ✓'});
+}
+$('#casoBtn').onclick=()=>{
+  [SB,SA].forEach(s=>{s.est[0]=6.2*U[0].tonV;s.est[1]=6.3*U[1].tonV;s.est[2]=1.4*U[2].tonV});
+  STOPS.push({u:2,ini:SB.t-10,fim:SB.t+160,tipo:'Quebra na moenda (cenário)',prog:false});
+  feed('crit','Cenário: Iturama e Limeira cheias, moenda de Carneirinho parada. Caminhão carregado na Faz. Boa Vista (F01).');
+  $('#dFrente').value='0';go('despacho');
+};
+$('#resetBtn').onclick=()=>{reset();G3reset();go('geral')};
+
+/* ============ 3D ============ */
+// rede de estradas: rodovias ligando as 3 unidades + estradas de terra das frentes até a rodovia
+const HW=[[0,1],[0,2],[1,2]];
+const plen=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function projSeg(p,a,b){const dx=b.x-a.x,dy=b.y-a.y;let t=((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy);t=Math.max(0.08,Math.min(0.92,t));const q={x:a.x+dx*t,y:a.y+dy*t};return{q,d:plen(p,q)}}
+const JUNC=F.map(f=>{let best=null;for(const [a,b] of HW){const r=projSeg(f,U[a],U[b]);if(!best||r.d<best.d)best={...r,a,b}}return best});
+const ROUTES=F.map((f,j)=>U.map((u,i)=>{const J=JUNC[j];let pts=[{x:f.x,y:f.y},J.q];
+  if(i===J.a||i===J.b)pts.push(u);else{const va=plen(J.q,U[J.a])+plen(U[J.a],u),vb=plen(J.q,U[J.b])+plen(U[J.b],u);pts.push(va<vb?U[J.a]:U[J.b],u)}
+  pts=pts.map(p=>({x:p.x,y:p.y}));const cum=[0];for(let k=1;k<pts.length;k++)cum.push(cum[k-1]+plen(pts[k-1],pts[k]));return{pts,cum,L:cum[cum.length-1]}}));
+function along(R,f){const s=Math.max(0,Math.min(1,f))*R.L;let k=1;while(k<R.pts.length-1&&R.cum[k]<s)k++;const a=R.pts[k-1],b=R.pts[k],seg=(R.cum[k]-R.cum[k-1])||1,u=(s-R.cum[k-1])/seg;return{x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u,ang:Math.atan2(b.y-a.y,b.x-a.x)}}
+function truckPos3(k,t){if(k.leg&&k.leg.st===k.st){const L=k.leg,f=Math.max(0,Math.min(1,(t-L.t0)/((L.t1-L.t0)||1)));return{x:L.from.x+(L.to.x-L.from.x)*f,y:L.from.y+(L.to.y-L.from.y)*f,ang:Math.atan2(L.to.y-L.from.y,L.to.x-L.from.x)}}
+  const R=ROUTES[k.f][k.u];if(k.st==='ida')return along(R,(t-k.tSai)/(k.eta-k.tSai));const p=along(R,1-(t-k.tLib)/(k.tFim-k.tLib));p.ang+=Math.PI;return p}
+function segDist(p,a,b){const dx=b.x-a.x,dy=b.y-a.y;let t=((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1);t=Math.max(0,Math.min(1,t));return Math.hypot(p.x-a.x-dx*t,p.y-a.y-dy*t)}
+function roadDist(p){let m=1e9;HW.forEach(([a,b])=>m=Math.min(m,segDist(p,U[a],U[b])));F.forEach((f,j)=>m=Math.min(m,segDist(p,f,JUNC[j].q)));return m}
+
+let G3=null;
+function G3reset(){if(G3){G3.trucks.forEach(m=>G3.sc.remove(m));G3.trucks.clear()}}
+function resize3D(){if(!G3)return;const b=$('#c3d');G3.r.setSize(b.clientWidth,b.clientHeight);G3.cam.aspect=b.clientWidth/b.clientHeight;G3.cam.updateProjectionMatrix()}
+function init3D(){
+  if(G3)return;if(!window.__THREE){$('#c3dMsg').textContent='Carregando cena 3D… (precisa de internet para baixar o Three.js)';return}
+  const {THREE,OrbitControls}=window.__THREE;const box=$('#c3d');box.innerHTML='';
+  const r=new THREE.WebGLRenderer({antialias:true});r.setPixelRatio(Math.min(1.75,devicePixelRatio));
+  r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.05;r.outputColorSpace=THREE.SRGBColorSpace;
+  box.appendChild(r.domElement);
+  const lblBox=document.createElement('div');lblBox.className='lbls';box.appendChild(lblBox);
+  box.insertAdjacentHTML('beforeend',`<div class="v3btns"><button data-v="geral" class="on">Visão geral</button>${U.map((u,i)=>`<button data-v="${i}">${u.nome.replace(' do Oeste','')}</button>`).join('')}<button data-v="rot">⟳ Girar</button></div>
+    <div class="v3leg"><span><b class="tk"></b>rodotrem carregado</span><span><b class="tk e"></b>vazio · cabine cinza = na frente</span><span><b class="gz"></b>barra = voltas (amarelo mín · vermelho máx)</span></div>`);
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(38,1,0.5,900);cam.position.set(18,78,62);
+  const ctl=new OrbitControls(cam,r.domElement);ctl.target.set(-24,0,-8);ctl.enableDamping=true;ctl.dampingFactor=0.08;ctl.autoRotate=true;ctl.autoRotateSpeed=0.25;ctl.maxPolarAngle=1.32;ctl.minDistance=12;ctl.maxDistance=180;
+  const hemi=new THREE.HemisphereLight(0xdfeaf5,0x8a7f5a,1.0);sc.add(hemi);
+  const sun=new THREE.DirectionalLight(0xfff1dc,2.4);sun.position.set(40,95,55);sun.target.position.set(-25,0,-8);sc.add(sun,sun.target);
+  sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-95,right:95,top:75,bottom:-75,near:10,far:260});sun.shadow.bias=-0.0006;sun.shadow.normalBias=0.04;
+  const V=(x,y,h=0)=>new THREE.Vector3(x,h,-y);
+  const M=(c,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:o.r??0.85,metalness:o.m??0,...o.x});
+  const mesh=(g,m,sh=true)=>{const o=new THREE.Mesh(g,m);o.castShadow=sh;o.receiveShadow=true;return o};
+
+  // chão com leve variação de cor
+  const gg=new THREE.PlaneGeometry(260,180,80,56);gg.rotateX(-Math.PI/2);const gc=[],base=new THREE.Color(0xcfc595),rng=mulberry32(11);
+  for(let k=0;k<gg.attributes.position.count;k++){const c=base.clone().offsetHSL((rng()-.5)*0.02,(rng()-.5)*0.05,(rng()-.5)*0.05);gc.push(c.r,c.g,c.b)}
+  gg.setAttribute('color',new THREE.Float32BufferAttribute(gc,3));
+  const ground=new THREE.Mesh(gg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));ground.position.set(-27,0,7);ground.receiveShadow=true;sc.add(ground);
+
+  // fita (estrada / rio)
+  function ribbon(pts,w,y,mat){const pos=[],idx=[];for(let k=0;k<pts.length;k++){const o=pts[Math.max(k-1,0)],q=pts[Math.min(k+1,pts.length-1)];const dx=q.x-o.x,dy=q.y-o.y,L=Math.hypot(dx,dy)||1,nx=-dy/L*w/2,ny=dx/L*w/2,p=pts[k];
+      pos.push(p.x+nx,y,-(p.y+ny),p.x-nx,y,-(p.y-ny));if(k){const a=(k-1)*2;idx.push(a,a+2,a+1,a+1,a+2,a+3)}}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.receiveShadow=true;mat.side=THREE.DoubleSide;return m}
+  const dens=(a,b,n)=>Array.from({length:n+1},(_,k)=>({x:a.x+(b.x-a.x)*k/n,y:a.y+(b.y-a.y)*k/n}));
+
+  // rio com mata ciliar
+  const riv=new THREE.CatmullRomCurve3([[-110,-26],[-80,-20],[-55,-29],[-30,-22],[-5,-30],[20,-24],[50,-31]].map(p=>new THREE.Vector3(p[0],0,p[1]))).getPoints(120).map(v=>({x:v.x,y:v.z}));
+  sc.add(ribbon(riv,3.2,0.03,M(0x5f95b8,{r:0.3,m:0.1})));sc.add(ribbon(riv,5.2,0.02,M(0x9fb07a)));
+
+  // estradas
+  const asf=M(0x4b4c50,{r:0.9}),terra=M(0xb98a5e);
+  HW.forEach(([a,b])=>sc.add(ribbon(dens(U[a],U[b],2),1.5,0.07,asf)));
+  F.forEach((f,j)=>sc.add(ribbon(dens(f,JUNC[j].q,2),0.9,0.06,terra)));
+  // faixa central tracejada
+  const dashG=new THREE.BoxGeometry(0.9,0.02,0.12),dashes=[];HW.forEach(([a,b])=>{const L=plen(U[a],U[b]);for(let s=6;s<L-6;s+=2.2){const t=s/L;dashes.push({x:U[a].x+(U[b].x-U[a].x)*t,y:U[a].y+(U[b].y-U[a].y)*t,ang:Math.atan2(U[b].y-U[a].y,U[b].x-U[a].x)})}});
+  const dm=new THREE.InstancedMesh(dashG,new THREE.MeshBasicMaterial({color:0xf2d36b}),dashes.length);const o3=new THREE.Object3D();
+  dashes.forEach((d,k)=>{o3.position.copy(V(d.x,d.y,0.09));o3.rotation.set(0,d.ang,0);o3.updateMatrix();dm.setMatrixAt(k,o3.matrix)});sc.add(dm);
+
+  // canaviais (fileiras instanciadas)
+  const rowsData=[],soils=[];
+  function field(cx,cy,w,h,tipo,ang=0){soils.push({cx,cy,w,h,tipo,ang});if(tipo==='colhido')return;const gap=0.55;for(let z=-h/2+0.3;z<h/2;z+=gap)rowsData.push({cx,cy,ang,off:z,w:w-0.4,h:tipo==='nova'?0.35:0.9+rng()*0.5,tipo})}
+  for(let n=0,tries=0;n<55&&tries<900;tries++){const cx=-100+rng()*140,cy=-40+rng()*90,w=6+rng()*8,h=5+rng()*6;const c={x:cx,y:cy};
+    if(U.some(u=>plen(u,c)<13)||F.some(f=>plen(f,c)<9)||roadDist(c)<Math.max(w,h)/2+1.2||riv.some(p=>plen(p,c)<Math.max(w,h)/2+2))continue;
+    field(cx,cy,w,h,rng()<0.18?'colhido':rng()<0.15?'nova':'cana',(rng()-.5)*0.5);n++}
+  F.forEach(f=>field(f.x,f.y,10,8,'frente'));
+  const soilM={cana:M(0x8d6a45),nova:M(0x9c7550),colhido:M(0xc9a66b),frente:M(0x8d6a45)};
+  soils.forEach(s=>{const m=mesh(new THREE.PlaneGeometry(s.w,s.h),soilM[s.tipo],false);m.rotation.x=-Math.PI/2;m.rotation.z=s.ang;m.position.copy(V(s.cx,s.cy,0.04));sc.add(m);
+    if(s.tipo==='colhido'){for(let k=0;k<6;k++){}}});
+  const rowM=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,0.38),M(0xffffff,{r:0.95}),rowsData.length);rowM.castShadow=true;rowM.receiveShadow=true;
+  const cA=new THREE.Color(0x6f9e35),cB=new THREE.Color(0x8fb446),cN=new THREE.Color(0xa7c46a);
+  rowsData.forEach((rw,k)=>{const ca=Math.cos(rw.ang),sa=Math.sin(rw.ang);const px=rw.cx-sa*rw.off,py=rw.cy+ca*rw.off;o3.position.copy(V(px,py,rw.h/2+0.04));o3.rotation.set(0,rw.ang,0);o3.scale.set(rw.w,rw.h,1);o3.updateMatrix();rowM.setMatrixAt(k,o3.matrix);rowM.setColorAt(k,rw.tipo==='nova'?cN:cA.clone().lerp(cB,rng()))});
+  sc.add(rowM);
+
+  // árvores (mata ciliar e capões)
+  const trees=[];riv.forEach((p,k)=>{if(k%2)return;for(let s of [-1,1])if(rng()<0.8)trees.push({x:p.x+(rng()-.5)*3,y:p.y+s*(3+rng()*3)})});
+  for(let c=0;c<14;c++){const cx=-100+rng()*140,cy=-35+rng()*85;if(U.some(u=>plen(u,{x:cx,y:cy})<12)||roadDist({x:cx,y:cy})<5)continue;for(let k=0;k<14;k++){const p={x:cx+(rng()-.5)*7,y:cy+(rng()-.5)*7};if(roadDist(p)>2)trees.push(p)}}
+  const crown=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),M(0xffffff),trees.length),trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.12,0.16,1.2,5),M(0x6b4d33),trees.length);crown.castShadow=true;trunk.castShadow=true;
+  const tc1=new THREE.Color(0x3f6e2c),tc2=new THREE.Color(0x5c8a3a);
+  trees.forEach((t,k)=>{const s=0.8+rng()*0.9;o3.rotation.set(0,rng()*6,0);o3.scale.set(s,s*1.25,s);o3.position.copy(V(t.x,t.y,1.2+s));o3.updateMatrix();crown.setMatrixAt(k,o3.matrix);crown.setColorAt(k,tc1.clone().lerp(tc2,rng()));
+    o3.scale.set(1,1,1);o3.position.copy(V(t.x,t.y,0.6));o3.updateMatrix();trunk.setMatrixAt(k,o3.matrix)});sc.add(crown,trunk);
+
+  const pick=[];
+  // frentes: colhedora andando no talhão + etiqueta
+  const harvs=F.map((f,j)=>{const g=new THREE.Group();const body=mesh(new THREE.BoxGeometry(1.4,1.0,0.9),M(0x2f7a3a));body.position.y=0.8;const cab=mesh(new THREE.BoxGeometry(0.5,0.5,0.7),M(0xdfe7ea,{r:0.3}));cab.position.set(0.35,1.5,0);const el=mesh(new THREE.BoxGeometry(0.25,0.25,1.2),M(0xf2b705));el.position.set(-0.2,1.3,0.9);g.add(body,cab,el);
+    g.userData={tipo:'f',j};[body,cab].forEach(m=>{m.userData={tipo:'f',j};pick.push(m)});sc.add(g);
+    const hit=new THREE.Mesh(new THREE.BoxGeometry(10,1.5,8),new THREE.MeshBasicMaterial({visible:false}));hit.position.copy(V(f.x,f.y,0.7));hit.userData={tipo:'f',j};sc.add(hit);pick.push(hit);return g});
+
+  // usinas
+  const units=U.map((u,i)=>{const col=new THREE.Color(ucol(i));const g=new THREE.Group();g.position.copy(V(u.x,u.y));
+    const tag=o=>{o.userData={tipo:'u',i};pick.push(o);return o};
+    const slab=mesh(new THREE.BoxGeometry(17,0.25,13),M(0xd8d4cb),false);slab.position.set(1,0.12,-1.5);g.add(tag(slab));
+    const patio=mesh(new THREE.BoxGeometry(9,0.06,6),M(0xbfb9ad),false);patio.position.set(-2.5,0.27,2);g.add(patio);
+    // moenda / prédio principal
+    const mill=mesh(new THREE.BoxGeometry(6,3.6,4.2),M(0xeceae4));mill.position.set(0,2.05,-5);g.add(tag(mill));
+    const roof=mesh(new THREE.BoxGeometry(6.3,0.35,4.5),M(col,{r:0.6}));roof.position.set(0,4.0,-5);g.add(roof);
+    const band=mesh(new THREE.BoxGeometry(6.05,0.5,4.25),M(col,{r:0.6}));band.position.set(0,1.0,-5);g.add(band);
+    // caldeira + chaminés
+    const boil=mesh(new THREE.BoxGeometry(3,5.5,3),M(0xcdc7bb));boil.position.set(4.8,2.95,-6);g.add(tag(boil));
+    const chims=[[4.2,-7],[5.5,-7]].map(([x,z])=>{const c=mesh(new THREE.CylinderGeometry(0.32,0.42,10,14),M(0x9c9c9c,{r:0.5}));c.position.set(x,5.2,z);g.add(c);const b2=mesh(new THREE.CylinderGeometry(0.34,0.34,0.7,14),M(0xd64545));b2.position.set(x,9.4,z);g.add(b2);return{x,z}});
+    // tanques de etanol
+    [[-5.5,-7.2],[-5.5,-4.4],[-8.2,-5.8]].forEach(([x,z])=>{const t=mesh(new THREE.CylinderGeometry(1.25,1.25,2.6,24),M(0xf1f1ee,{r:0.35,m:0.25}));t.position.set(x,1.55,z);g.add(t);const tp=mesh(new THREE.CylinderGeometry(1.0,1.25,0.3,24),M(0xd9d9d6,{r:0.35,m:0.25}));tp.position.set(x,3.0,z);g.add(tp)});
+    // armazém de açúcar (abóbada)
+    const arm=mesh(new THREE.CylinderGeometry(1.7,1.7,7,20,1,false,0,Math.PI),M(0xe3dfd3));arm.rotation.set(0,0,Math.PI/2);arm.rotation.order='ZYX';arm.rotation.set(Math.PI/2,0,Math.PI/2);arm.position.set(7.5,0.25,0.5);g.add(tag(arm));
+    // pilha de cana no pátio
+    const pg2=new THREE.SphereGeometry(1,11,6,0,Math.PI*2,0,Math.PI/2);{const pa=pg2.attributes.position,rr=mulberry32(5+i);for(let k=0;k<pa.count;k++){if(pa.getY(k)>0.05){const f=0.88+rr()*0.24;pa.setX(k,pa.getX(k)*f);pa.setZ(k,pa.getZ(k)*f);pa.setY(k,pa.getY(k)*(0.85+rr()*0.3))}}pg2.computeVertexNormals()}
+    const pile=mesh(pg2,M(0x7c8a3a,{r:1,x:{flatShading:true}}));pile.position.set(5,0.3,2.6);pile.scale.set(2.9,1,2.2);g.add(tag(pile));
+    // régua de voltas
+    const pole=mesh(new THREE.BoxGeometry(0.5,8.8,0.5),M(0xffffff,{r:0.4}));pole.position.set(-9.2,4.65,3.6);g.add(pole);
+    const fill=mesh(new THREE.BoxGeometry(0.62,1,0.62),M(col,{r:0.5}),false);fill.position.set(-9.2,0.3,3.6);g.add(fill);
+    const mk=(y,c)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.16,1.3),new THREE.MeshBasicMaterial({color:c}));m.position.set(-9.2,0.3+y,3.6);g.add(m);return m};
+    const mMin=mk(u.minV,0xe6a525),mMax=mk(u.maxV,0xd64545);
+    // farol de status
+    const bea=new THREE.Mesh(new THREE.SphereGeometry(0.45,16,10),new THREE.MeshStandardMaterial({color:0x3cbf73,emissive:0x3cbf73,emissiveIntensity:1.5}));bea.position.set(0,4.6,-5);g.add(bea);
+    const ring=new THREE.Mesh(new THREE.RingGeometry(9.5,10.2,64),new THREE.MeshBasicMaterial({color:0xd64545,transparent:true,opacity:0,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=0.1;g.add(ring);
+    // fumaça
+    const smoke=[];chims.forEach(c=>{for(let s=0;s<6;s++){const p=new THREE.Mesh(new THREE.IcosahedronGeometry(0.7,1),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.5,roughness:1}));p.userData={o:s/6,x:c.x,z:c.z};g.add(p);smoke.push(p)}});
+    sc.add(g);return{g,pile,fill,mMin,mMax,bea,ring,smoke,col}});
+
+  // rodotrem
+  const tkGeo={cab:new THREE.BoxGeometry(0.75,0.8,0.8),chs:new THREE.BoxGeometry(2.9,0.18,0.55),tr:new THREE.BoxGeometry(1.0,0.55,0.78),load:new THREE.BoxGeometry(0.95,0.32,0.72)};
+  const tkM={chs:M(0x2a2c30),tr:M(0x8c8f94,{m:0.3,r:0.5}),load:M(0x7da23a,{r:1}),win:M(0x223344,{r:0.2})};
+  function truck(vi){const g=new THREE.Group();const cab=mesh(tkGeo.cab,M(0x9aa0a6,{r:0.45}));cab.position.set(1.15,0.62,0);
+    const chs=mesh(tkGeo.chs,tkM.chs);chs.position.set(0,0.2,0);const t1=mesh(tkGeo.tr,tkM.tr);t1.position.set(0.15,0.55,0);const t2=mesh(tkGeo.tr,tkM.tr);t2.position.set(-1.0,0.55,0);
+    const l1=mesh(tkGeo.load,tkM.load);l1.position.set(0.15,0.95,0);const l2=mesh(tkGeo.load,tkM.load);l2.position.set(-1.0,0.95,0);
+    g.add(cab,chs,t1,t2,l1,l2);g.userData={tipo:'t',id:vi,loads:[l1,l2],cab};g.traverse(o=>{if(o.isMesh)o.userData={tipo:'t',id:vi}});g.scale.setScalar(1.05);return g}
+
+  // etiquetas HTML
+  const uL=U.map((u,i)=>{const d=document.createElement('div');d.className='lbl';lblBox.appendChild(d);return d});
+  const fL=F.map(f=>{const d=document.createElement('div');d.className='lbl f';d.textContent=f.id+' · '+f.nome.replace('Faz. ','');lblBox.appendChild(d);return d});
+  const placeL=(el,v)=>{const p=v.clone().project(cam);if(p.z>1){el.style.display='none';return}el.style.display='';el.style.transform=`translate(${(p.x*.5+.5)*box.clientWidth}px,${(-p.y*.5+.5)*box.clientHeight}px) translate(-50%,-100%)`};
+
+  // câmera: voar até
+  let fly=null;const VIEWS={geral:{t:new THREE.Vector3(-24,0,-8),p:new THREE.Vector3(18,78,62)}};
+  const far=box.clientWidth<600?1.6:1;VIEWS.geral.p.multiplyScalar(far);U.forEach((u,i)=>VIEWS[i]={t:V(u.x,u.y,1),p:V(u.x+20*far,u.y-30*far,26*far)});cam.position.copy(VIEWS.geral.p);
+  box.querySelectorAll('.v3btns button').forEach(b=>b.onclick=()=>{const v=b.dataset.v;if(v==='rot'){ctl.autoRotate=!ctl.autoRotate;b.classList.toggle('on',ctl.autoRotate);return}
+    box.querySelectorAll('.v3btns button:not([data-v=rot])').forEach(x=>x.classList.toggle('on',x===b));fly={t0:performance.now(),ft:ctl.target.clone(),fp:cam.position.clone(),...VIEWS[v]};if(v!=='geral'){sel={tipo:'u',i:+v};info3d()}});
+  box.querySelector('[data-v=rot]').classList.add('on');
+
+  // seleção
+  const ray=new THREE.Raycaster(),mv=new THREE.Vector2();let sel=null;
+  r.domElement.addEventListener('pointerdown',e=>{r.domElement._d=[e.clientX,e.clientY]});
+  r.domElement.addEventListener('pointerup',e=>{const d=r.domElement._d;if(!d||Math.hypot(e.clientX-d[0],e.clientY-d[1])>6)return;const bb=r.domElement.getBoundingClientRect();mv.x=(e.clientX-bb.left)/bb.width*2-1;mv.y=-(e.clientY-bb.top)/bb.height*2+1;ray.setFromCamera(mv,cam);
+    const hits=ray.intersectObjects([...pick,...G3.trucks.values()],true).filter(h=>h.object.userData&&h.object.userData.tipo);if(hits.length){sel=hits[0].object.userData;ctl.autoRotate=false;box.querySelector('[data-v=rot]').classList.remove('on');info3d()}});
+  function info3d(){if(!sel)return;const h=sel.tipo==='u'?fichaUnit(sel.i):sel.tipo==='f'?fichaFrente(sel.j):fichaTruck(sel.id);
+    $('#info3d').innerHTML=h+'<p class="hint mt">Arraste para girar · pinça/scroll para zoom</p>'}
+  G3={THREE,r,sc,cam,ctl,units,trucks:new Map(),V,info3d,lastInfo:0};
+
+  let lastTheme=null;
+  function theme(){const dark=document.documentElement.dataset.theme==='dark';if(dark===lastTheme)return;lastTheme=dark;
+    const sky=new THREE.Color(dark?0x1a2233:0xcfe0ec);sc.background=sky;sc.fog=new THREE.Fog(sky,dark?110:150,dark?260:330);
+    hemi.intensity=dark?0.45:1.0;sun.intensity=dark?0.9:2.4;sun.color.set(dark?0xaab8ff:0xfff1dc);r.toneMappingExposure=dark?0.95:1.05}
+  function loop(){requestAnimationFrame(loop);if(PAGE!=='mapa3d')return;const now=performance.now();theme();
+    if(fly){const u=Math.min(1,(now-fly.t0)/1200),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;ctl.target.lerpVectors(fly.ft,fly.t,e);cam.position.lerpVectors(fly.fp,fly.p,e);if(u>=1)fly=null}
+    units.forEach((o,i)=>{const u=U[i],v=SB.est[i]/u.tonV;const h=0.25+Math.min(9,v)*0.38;o.pile.scale.y+=(h-o.pile.scale.y)*0.08;
+      const fh=Math.max(0.05,Math.min(8.5,v));o.fill.scale.y+=(fh-o.fill.scale.y)*0.08;o.fill.position.y=0.3+o.fill.scale.y/2;
+      o.mMin.position.y=0.3+u.minV;o.mMax.position.y=0.3+u.maxV;
+      const stop=stopAt(i,SB.t),blink=Math.floor(now/450)%2;const c=stop?0xd64545:v<u.minV||v>u.maxV?0xe6a525:0x3cbf73;o.bea.material.color.setHex(c);o.bea.material.emissive.setHex(c);o.bea.material.emissiveIntensity=stop&&blink?0.2:1.6;
+      o.ring.material.opacity=stop?0.35+0.35*Math.sin(now/250):0;
+      o.smoke.forEach(p=>{p.visible=!stop;const d=p.userData;d.o=(d.o+0.0035)%1;p.position.set(d.x+d.o*2.2,10+d.o*7,d.z-d.o*1.2);p.scale.setScalar(0.5+d.o*1.8);p.material.opacity=0.55*(1-d.o)});
+      const nf=SB.tr.filter(k=>k.u===i&&k.st==='fila').length,stt=statusUnit(i);
+      uL[i].innerHTML=`<i style="background:${ucol(i)}"></i><b>${u.nome}</b><span>${fmt(v,1)} v</span><em class="${stt.c}">${stop?'parada':nf+' fila'}</em>`;
+      placeL(uL[i],V(u.x,u.y,11.5))});
+    const narrow=box.clientWidth<600;F.forEach((f,j)=>{if(narrow)fL[j].style.display='none';const g=harvs[j],t=now/1000/9+j*0.7,ph=(t%2)<1?(t%1):1-(t%1);const row=Math.floor(t/2)%6;g.position.copy(V(f.x-4.2+ph*8.4,f.y-3+row*1.1,0));g.rotation.y=(t%2)<1?0:Math.PI;if(!narrow)placeL(fL[j],V(f.x,f.y,3.2))});
+    const seen=new Set(),qn=U.map(()=>0),grey=new THREE.Color(0x9aa0a6);
+    const place=(vi,p,load,col)=>{seen.add(vi);let m=G3.trucks.get(vi);if(!m){m=truck(vi);sc.add(m);G3.trucks.set(vi,m);m.position.copy(V(p.x,p.y,0.1));m.rotation.y=p.ang}
+      m.position.lerp(V(p.x,p.y,0.1),0.22);let da=p.ang-m.rotation.y;da=Math.atan2(Math.sin(da),Math.cos(da));m.rotation.y+=da*0.25;
+      m.userData.cab.material.color.copy(col||grey);m.userData.loads.forEach(l=>{l.visible=load>0.02;l.scale.y=Math.max(0.05,load);l.position.y=0.79+0.16*Math.max(0.05,load)})};
+    for(const k of SB.tr){let p;if(k.st==='fila'){const n=qn[k.u]++;const u=U[k.u];p={x:u.x-6.4+(n%6)*1.55,y:u.y-0.6-Math.floor(n/6)*1.25,ang:Math.PI/2}}else p=truckPos3(k,SB.t);
+      place(k.v,p,k.st==='volta'?0:1,new THREE.Color(ucol(k.u)))}
+    F.forEach((f,j)=>{const pool=SB.pool[j];if(!pool.length)return;const L=loadingAt(SB,j),hp=harvs[j].position;
+      place(pool[0],{x:hp.x,y:-hp.z-1.5,ang:harvs[j].rotation.y},L.fill);
+      for(let q=1;q<pool.length;q++)place(pool[q],{x:f.x+6.2+Math.floor((q-1)/6)*1.5,y:f.y-3.4+((q-1)%6)*1.15,ang:Math.PI/2},0)});
+    for(const [id,m] of G3.trucks)if(!seen.has(id)){sc.remove(m);G3.trucks.delete(id)}
+    if(now-G3.lastInfo>1000){G3.lastInfo=now;info3d()}
+    ctl.update();r.render(sc,cam)}
+  theme();resize3D();loop();
+}
+window.addEventListener('three-ready',()=>{if(PAGE==='mapa3d')init3D(),setTimeout(resize3D,30)});
+window.addEventListener('resize',()=>{resize3D();render(true)});
+
+/* ============ render & loop ============ */
+let lastRender=0;
+function render(force){const now=performance.now();if(!force&&now-lastRender<900)return;lastRender=now;$('#clk').textContent=diaHora(SB.t);
+  if(PAGE==='geral')renderGeral();else if(PAGE==='frota')renderFrota();else if(PAGE==='predicao')renderPred();else if(PAGE==='comparativo')renderCmp();else if(PAGE==='motoristas'&&!motFoco())renderMot();else if(PAGE==='sugestoes')renderSug();else if(PAGE==='rotas'&&$('#rFila').checked&&!rotaFoco())renderRotas();if(FICHA)renderFicha();sugTick();$('#turnoSide').textContent=`${turnoTxt(turnoIdx(SB.t))} · troca às ${String(TURNOS[turnoIdx(SB.t)].fim).padStart(2,'0')}:00`}
+let lastTick=performance.now();
+setInterval(()=>{const now=performance.now(),dtr=(now-lastTick)/1000;lastTick=now;if(speed>0){advance(Math.min(10,speed*dtr/60));}
+  if(PAGE==='geral'&&speed>0)renderMap();$('#clk').textContent=diaHora(SB.t);render()},250);
+$$('#speeds button').forEach(b=>b.onclick=()=>{speed=+b.dataset.s;$$('#speeds button').forEach(x=>x.classList.toggle('on',x===b));$('#simbox').classList.toggle('paused',speed===0);$('#liveTxt').textContent=speed?`Ao vivo · ${speed}×`:'Pausado'});
+
+/* tema & TV */
+try{if(localStorage.getItem('bussola-tema')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}
+$('#themeBtn').onclick=()=>{const d=document.documentElement.dataset.theme==='dark';document.documentElement.dataset.theme=d?'light':'dark';try{localStorage.setItem('bussola-tema',d?'light':'dark')}catch(e){}$$('.chart').forEach(c=>c._hover=false);render(true)};
+let tvT=null;const TVP=['geral','sugestoes','frota','motoristas','predicao','mapa3d','comparativo'];
+function tvStep(){const n=TVP[(TVP.indexOf(PAGE)+1)%TVP.length];go(n);const bar=$('#tvbar');bar.style.transition='none';bar.style.width='0';requestAnimationFrame(()=>{bar.style.transition='width 15s linear';bar.style.width='100%'})}
+$('#tvBtn').onclick=()=>{if(tvT){clearInterval(tvT);tvT=null;document.body.classList.remove('tv');$('#tvBtn').textContent='▶ Modo TV';try{document.fullscreenElement&&document.exitFullscreen()}catch(e){}return}
+  document.body.classList.add('tv');$('#tvBtn').textContent='■ Sair da TV';try{document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}go('geral');tvT=setInterval(tvStep,15000);const bar=$('#tvbar');requestAnimationFrame(()=>{bar.style.transition='width 15s linear';bar.style.width='100%'})};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&tvT)$('#tvBtn').click()});
+
+/* init */
+$('#mF').innerHTML+=F.map((f,j)=>`<option value="${j}">${f.id} · ${f.nome}</option>`).join('');
+$('#rF').innerHTML=F.map((f,j)=>`<option value="${j}">${f.id} · ${f.nome}</option>`).join('');
+$('#dFrente').innerHTML=F.map((f,j)=>`<option value="${j}">${f.id} · ${f.nome}</option>`).join('');
+$('#hU').innerHTML+=U.map((u,i)=>`<option value="${i}">${u.nome}</option>`).join('');
+$('#hF').innerHTML+=F.map((f,j)=>`<option value="${j}">${f.id} · ${f.nome}</option>`).join('');
+reset();render(true);
+</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+window.__THREE={THREE,OrbitControls};window.dispatchEvent(new Event('three-ready'));
+</script>
+</body>
+</html>
